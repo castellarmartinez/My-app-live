@@ -9,9 +9,21 @@ const schema =
 
 const Users = mongoose.model("Users", schema)
 
-const uri = "mongodb+srv://Deivic:<password>@firstmongodbatlascluste.qxdyc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+const uri = "mongodb+srv://admin:David007@firstmongodbatlascluste.qxdyc.mongodb.net/FirstMongoDBAtlasCluster?retryWrites=true&w=majority"
 
-mongoose.connect(uri)
+async function database()
+{
+    try
+    {
+        await mongoose.connect(uri)
+    }
+    catch(err)
+    {
+        console.log(err.message)
+    }
+}
+
+database()
 
 exports.addNewUser = async function addNewUser() 
 {

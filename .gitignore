@@ -1,3 +1,5 @@
 node_modules
 nginx
 pm2
+httprequests
+src/home.js
