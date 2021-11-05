@@ -1,5 +1,5 @@
 const express = require('express')
-const mongo = require('../db/mongoose.js')
+const mongo = require('./db/mongoose')
 
 const app = express()
 const port = 3000
@@ -15,12 +15,12 @@ app.post('/users', async (req, res) =>
 {
     try 
     {
-        await mongo.addNewUser();
+        await mongo.addNewUser()
         res.sendStatus(200)
     }
     catch (err) 
     {
-        console.error(`Error: `, err.message);
+        console.error(`Error: `, err.message)
     }
 })
 
@@ -28,12 +28,12 @@ app.get('/users', async (req, res) =>
 {
     try 
     {
-        let users = await mongo.getAllUsers();
+        let users = await mongo.getAllUsers()
         res.send(users);
     }
     catch(err) 
     {
-            console.error(`Error: `, err.message);
+        console.error(`Error: `, err.message)
     }
 })
 
