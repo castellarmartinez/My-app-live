@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const redisClient = require('../redis/redis-server')
 
 const schema = 
 {
@@ -36,6 +37,7 @@ exports.addNewUser = async function addNewUser()
 
     let newUser = new Users(newPerson)
     await newUser.save()
+    redisClient.del('Users')
 }
 
 exports.getAllUsers = async function getAllUsers()
