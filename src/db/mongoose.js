@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const schema = 
 {
     name: String, 
-    lasName: String, 
+    lastName: String, 
     age: Number
 }
 
