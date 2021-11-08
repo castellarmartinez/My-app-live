@@ -1,7 +1,7 @@
 require('./redis/redis-server')
 const express = require('express')
 const mongo = require('./db/mongoose')
-const redisClient = require('../redis/redis-server')
+const redisClient = require('./redis/redis-server')
 const cacheUsers = require('./middlewares/cache')
 
 const app = express()
@@ -14,7 +14,7 @@ app.get('/', (req, res) =>
     res.send('¡Esta es información obtenida desde tu API!')
 })
 
-app.post('/users', cacheUsers, async (req, res) => 
+app.post('/users', async (req, res) => 
 {
     try 
     {
@@ -27,14 +27,14 @@ app.post('/users', cacheUsers, async (req, res) =>
     }
 })
 
-app.get('/users', async (req, res) => 
+app.get('/users', cacheUsers, async (req, res) => 
 {
     try 
     {
         let users = await mongo.getAllUsers()
         redisClient.setex('Users', 60*60, JSON.stringify(users))
 
-        res.send(users);
+        res.send(users)
     }
     catch(err) 
     {
