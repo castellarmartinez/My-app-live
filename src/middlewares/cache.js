@@ -10,7 +10,7 @@ const cacheUsers = (req, res, next) =>
             {
                 throw error
             }
-
+            
             if(data)
             {
                 const users = JSON.parse(data)
@@ -18,7 +18,6 @@ const cacheUsers = (req, res, next) =>
             }
             else
             {
-                console.log('Data no stored in cached.')
                 next()
             }
         }
