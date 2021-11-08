@@ -1,5 +1,7 @@
+require('./redis/redis-server')
 const express = require('express')
 const mongo = require('./db/mongoose')
+const redis = require('redis')
 
 const app = express()
 const port = 3000

@@ -40,5 +40,5 @@ exports.addNewUser = async function addNewUser()
 
 exports.getAllUsers = async function getAllUsers()
 {
-	return await Users.find()
+	return await Users.findOne({name: "Juan"})
 }
