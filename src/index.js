@@ -8,19 +8,19 @@ const helmet = require('helmet')
 const {module: config} = require('./config')
 
 const swaggerSpecs = swaggerJsDoc(swaggerOptions)
+
 const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives()
 delete cspDefaults['upgrade-insecure-requests']
 
+const port = config.APP_PORT || 3000
+const environment = config.NODE_ENV
+const apiDescription = config.API_DESCRIPTION
+
 const app = express()
-const port = 3000
-console.log(config.NODE_ENV)
-const environment = process.env.NODE_ENV
-const apiDescription = process.env.API_DESCRIPTION
 
 app.use(express.json())
 app.use(helmet({ contentSecurityPolicy: { directives: cspDefaults }}))
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
-
 app.use('/users', require('./routes/users-route'))
 app.use('/products', require('./routes/products-route'))
 app.use('/payment', require('./routes/payment-route'))
