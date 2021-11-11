@@ -1,15 +1,16 @@
 const redis = require('redis')
+const {module: config} = require('../config')
 
 const redisClient = redis.createClient(
 {
-    host: "mythirdclusterinredis.i7nbeo.0001.use1.cache.amazonaws.com",
-    port: 6379
+    host: config.REDIS_HOST,
+    port: config.REDIS_PORT
 })
 
 redisClient.on('error', () =>
 {
-    console.log('Error connecting to ' + "mythirdclusterinredis.i7nbeo.0001.use1.cache.amazonaws.com" 
-    + ':' + 6379 + '.\nCaused by: Connection refused.')
+    console.error('Error connecting to ' + config.REDIS_HOST 
+    + ':' + config.REDIS_PORT + '.\nCaused by: Connection refused.')
 })
 
 module.exports = redisClient

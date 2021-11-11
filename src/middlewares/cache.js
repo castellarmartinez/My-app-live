@@ -1,31 +1,24 @@
 const redisClient = require("../redis/redis-server")
 
-const cacheUsers = (req, res, next) =>
+const cacheProducts = (req, res, next) =>
 {
-    redisClient.get('Users', (error, data) =>
+    redisClient.get('Products', (error, data) =>
     {
-        try
+        if(error)
         {
-            if(error)
-            {
-                throw error
-            }
-            
-            if(data)
-            {
-                const users = JSON.parse(data)
-                res.json(users)
-            }
-            else
-            {
-                next()
-            }
+            throw error
         }
-        catch(err)
+
+        if(data)
         {
-            console.error(`Error: `, err.message)
+            const products = JSON.parse(data)
+            res.json(products)
+        }
+        else
+        {
+            next()
         }
     })
 }
 
-module.exports = cacheUsers
+module.exports = cacheProducts

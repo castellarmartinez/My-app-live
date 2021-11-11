@@ -1,46 +1,30 @@
 require('./redis/redis-server')
+require('./db/mongoose')
 const express = require('express')
-const mongo = require('./db/mongoose')
-const redisClient = require('./redis/redis-server')
-const cacheUsers = require('./middlewares/cache')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
+const swaggerOptions = require('./utils/swaggerOptions')
+const helmet = require('helmet')
+const {module: config} = require('./config')
+
+const swaggerSpecs = swaggerJsDoc(swaggerOptions)
+const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives()
+delete cspDefaults['upgrade-insecure-requests']
 
 const app = express()
 const port = 3000
+console.log(config.NODE_ENV)
 const environment = process.env.NODE_ENV
 const apiDescription = process.env.API_DESCRIPTION
 
-app.get('/', (req, res) =>
-{
-    res.send('¡Esta es información obtenida desde tu API!')
-})
+app.use(express.json())
+app.use(helmet({ contentSecurityPolicy: { directives: cspDefaults }}))
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
 
-app.post('/users', async (req, res) => 
-{
-    try 
-    {
-        await mongo.addNewUser()
-        res.sendStatus(200)
-    }
-    catch (err) 
-    {
-        console.error(`Error: `, err.message)
-    }
-})
-
-app.get('/users', cacheUsers, async (req, res) => 
-{
-    try 
-    {
-        let users = await mongo.getAllUsers()
-        redisClient.setex('Users', 60*60, JSON.stringify(users))
-
-        res.send(users)
-    }
-    catch(err) 
-    {
-        console.error(`Error: `, err.message)
-    }
-})
+app.use('/users', require('./routes/users-route'))
+app.use('/products', require('./routes/products-route'))
+app.use('/payment', require('./routes/payment-route'))
+app.use('/orders', require('./routes/order-route'))
 
 app.listen(port, () => 
 {
