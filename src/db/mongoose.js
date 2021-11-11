@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const redisClient = require('../redis/redis-server')
 const {module: config} = require('../config')
 const User = require('../models/user')
 
@@ -11,7 +10,14 @@ async function database()
     try
     {
         await mongoose.connect(uri)
-        console.log('Connected to the database:', config.DB_NAME)
+        console.info('Connected to the database:', config.DB_NAME)
+
+        const users = await User.find({isAdmin: true})
+
+        if(users.length === 0)
+        {
+            await addAdminUser()
+        }
     }
     catch(err)
     {
@@ -21,4 +27,18 @@ async function database()
 
 database()
 
+async function addAdminUser()
+{
+    const admin = new User(
+    {
+        name: 'Administrator',
+        username: 'Admin',
+        email: 'admin@delilahresto.com',
+        password: '@)T0(Z]p',
+        isAdmin: true,
+        phone: 5557777
+    })
+
+    admin.save()
+}
 
