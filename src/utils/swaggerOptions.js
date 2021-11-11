@@ -5,14 +5,14 @@ const swaggerOptions =
         openapi: "3.0.0",
         info:
         {
-            title: "My Persistent APP",
+            title: "My APP Live",
             version: "1.0.0",
-            description: "Second proyect for the Backend Bootcamp of Acamica."
+            description: "Third proyect for Acamica's Backend Bootcamp."
         },
         servers: 
         [
             {
-                url: "http://localhost:3000",
+                url: "http://first-deploy-506016382.us-east-1.elb.amazonaws.com/api",
                 description: 'Local server'
             }
         ],
