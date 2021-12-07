@@ -1,52 +1,29 @@
 const mongoose = require('mongoose')
-const User = require('./user')
 
-const addressSchema = mongoose.Schema( 
-{ 
-    address:
-    {
+const addressSchema = mongoose.Schema({ 
+    address: {
         type: String,
         required: true
     },
 
-    option:
-    {
+    option: {
         type: Number,
     },
 
-    owner:
-    {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     }
 })
-    
-// addressSchema.pre('save', async function(next)
-// {
-//     const addresses = this
-//     const length = addresses.addressList.length
-//     addresses.addressList[length - 1].option = length
 
-//     next()
-// })
-
-addressSchema.pre('save', async function(next)
-{
+addressSchema.pre('save', async function(next) {
     const address = this
     const addresses = await Address.find({owner: address.owner})
+    const length = addresses.length
 
-    if(addresses.length === 0)
-    {
-        address.option = 1
-    }
-    else
-    {
-        const length = addresses.length
-        address.option = length + 1
-    }
-
-    next()
+    address.option = length + 1
+    return next()
 })
 
 const Address = mongoose.model('Address', addressSchema)

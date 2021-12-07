@@ -1,95 +1,70 @@
 const mongoose = require('mongoose')
 
-const orderSchema = new mongoose.Schema(
-{
-    orderId: 
-    {
+const orderSchema = new mongoose.Schema({
+    orderId: {
         type: String,
         unique: true
     },
 
-    products: 
-    [
-        {
-            product: 
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                required: true,
-                ref: 'Product'
-            },
-            
-            quantity:
-            {
-                type: Number,
-                required: true
-            }
+    products: [{
+        product: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'Product'
+        },
+        
+        quantity: {
+            type: Number,
+            required: true
         }
-    ],
+    }],
     
-    total:
-    {
+    total: {
         type: Number,
         required: true
     },
         
-    paymentMethod:
-    {
+    paymentMethod: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Payment'
     },
 
-    address:
-    {
+    address: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Adress'
     },
     
-    state:
-    {
+    state: {
         type: String,
         required: true
     },
     
-    owner:
-    {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     }
 })
 
-orderSchema.pre('save', async function(next)
-{
+orderSchema.pre('save', async function(next) {
     const order = this
 
-    if(!order.orderId)
-    {
-        try
-        {
-            const allOrders = await Order.find({})
-            const count = allOrders.length
-    
-            if(count === 0)
-            {
-                order.orderId = '#'.concat(1)
-            }
-            else
-            {          
-                order.orderId = '#'.concat(count + 1)
-            }
-        
-            next()
-        }
-        catch(error)
-        {
-            console.log(error.message)
-        }
+    if (order.orderId) {
+        return next()
     }
-    else
-    {
-        next()
+
+    try {
+        const allOrders = await Order.find({})
+        const count = allOrders.length
+        
+        order.orderId = '#'.concat(count + 1)
+    
+        return next()
+    }
+    catch (error) {
+        console.log(error.message)
     }
 })
 

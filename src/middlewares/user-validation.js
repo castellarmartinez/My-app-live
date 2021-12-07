@@ -14,11 +14,9 @@ const UsuarioSchema = Joi.object({
 
     email: 
         Joi.string()
-        .email(
-        {
+        .email({
             minDomainSegments: 2, 
-            tlds: 
-            { 
+            tlds: { 
                 allow: ['com', 'net', 'edu', 'co']
             }
         })
@@ -46,76 +44,61 @@ const UsuarioSchema = Joi.object({
 
 // Functions to use in middlewares
 
-function invalidUserError(message)
-{
-    if(message.includes('"name"'))
-    {
+function invalidUserError(message) {
+    if (message.includes('"name"')) {
         return 'You must enter a name with a length between ' 
         + '3-32 characters only containing letters and spaces.'
     }
-    else if(message.includes('"email"'))
-    {
+    else if (message.includes('"email"')) {
         return 'You must enter a valid email.'
     }
-    else if(message.includes('"password"'))
-    {
+    else if (message.includes('"password"')) {
         return 'You must enter a password with a length ' + 
         'between 6-32 characters.'
     }
-    else if(message.includes('"username"'))
-    {
+    else if (message.includes('"username"')) {
         return 'You must enter an username with a length ' +
         ' between 3-32 characters only containing letters and numbers.'
     }
-    else if(message.includes('"phone"'))
-    {
+    else if (message.includes('"phone"')) {
         return 'You must enter a valid phone number.'
     }
-    else
-    {
+    else {
         return 'The fields you are trying to add are not allowed.'
     }
 }
 
 // Middlewares
 
-const tryValidUser = async (req, res, next) => 
-{
+const tryValidUser = async (req, res, next) => {
     const newUser = req.body
 
-    try
-    {
+    try {
         await UsuarioSchema.validateAsync(newUser)
 
-        next()
+        return next()
     }
-    catch(error)
-    {
+    catch (error) {
         const message = invalidUserError(error.message)
         res.status(400).send(message)
     }
 }
 
-const tryRegisteredUser = async (req, res, next) => 
-{
-    const {username, email} = req.body
+const tryRegisteredUser = async (req, res, next) => {
+    const { username, email } = req.body
 
-    try
-    {
+    try {
         const emailTaken = await User.findOne({email})
         const usernameTaken = await User.findOne({username})
 
-        if(emailTaken)
-        {
+        if (emailTaken) {
             res.status(409).send('Email already in use.')
         }
-        else if(usernameTaken)
-        {
+        else if (usernameTaken) {
             res.status(409).send('Username already in use.')
         }
-        else
-        {
-            next()
+        else {
+            return next()
         }
     }
     catch(error)
@@ -124,131 +107,104 @@ const tryRegisteredUser = async (req, res, next) =>
     }
 }
 
-const tryLogin = async (req, res, next) =>
-{ 
-    try
-    {
+const tryLogin = async (req, res, next) => { 
+    try {
         const {email: emailEntered, password: passwordEntered} = req.body
         const user = await User.findOne({email: emailEntered})
 
-        if(user)
-        {
-            const correctPassword = bcrypt.compareSync(passwordEntered, user.password)
-
-            if(!correctPassword)
-            {
-                throw new Error('The password you entered is incorrect.')
-            }
-
-            if(user.token !== '')
-            {
-                throw new Error('You are trying to log in again. ' +
-                'This is your token, in case you forgot it:\n' + 
-                user.token)
-            }
-
-            if(!user.isActive)
-            {
-                throw new Error('The user is suspended.')
-            }
-    
-            req.user = user
-            next()
-        }
-        else
-        {
+        if (!user) {
             throw new Error('No user registered with that email.')
         }
+
+        const correctPassword = bcrypt.compareSync(passwordEntered, user.password)
+
+        if (!correctPassword) {
+            throw new Error('The password you entered is incorrect.')
+        }
+
+        if (user.token !== '') {
+            throw new Error('You are trying to log in again. ' +
+            'This is your token, in case you forgot it:\n' + 
+            user.token)
+        }
+
+        if (!user.isActive) {
+            throw new Error('The user is suspended.')
+        }
+
+        req.user = user
+        return next()
     }
-    catch(error)
-    {
+    catch (error) {
         res.status(400).send(error.message)
     }
 }
 
-const tryLogout = async (req, res, next) =>
-{
-    try
-    {
+const tryLogout = async (req, res, next) => {
+    try {
         const user = await bearerAuth(req)
 
-        if(!user)
-        {
+        if (!user) {
             throw new Error()
         }
 
         req.user = user
-        next()
+        return next()
     }
-    catch(error)
-    {
+    catch (error) {
         res.status(403).send('Please authenticate.')
     }
 }
 
-const tryValidAddress = (req, res, next) =>
-{
-    const {address} = req.body
+const tryValidAddress = (req, res, next) => {
+    const { address } = req.body
 
-    if(address)
-    {
-        next()
+    if (address) {
+        return next()
     }
-    else
-    {
+    else {
         res.status(400).send('You must provide an address.')
     }
 }
 
-const tryAddressExist = async (req, res, next) =>
-{
-    const {option} = req.query
+const tryAddressExist = async (req, res, next) => {
+    const { option } = req.query
     const user = req.user
 
-    try
-    {
+    try {
         const exist = await Address.findOne({owner: user._id, option})
 
-        if(exist)
-        {
+        if (exist) {
             req.address = exist
-            next()
+            return next()
         }
-        else
-        {
+        else {
             throw new Error('The address you are trying to access does not exist.')
         }
     }
-    catch(error)
-    {
+    catch (error) {
         res.status(400).send(error.message)
     }
 }
 
-const trySuspend = async (req, res, next) =>
-{
-    const {email} = req.body
+const trySuspend = async (req, res, next) => {
+    const { email } = req.body
 
-    try
-    {
+    try {
         const user = await User.findOne({email})
 
-        if(!user)
-        {
+        if (!user) {
             res.status(401).send('An user with that emain is not registered.')
         }
-        else if(user.isAdmin)
-        {
+        else if (user.isAdmin) {
             res.status(401).send('Admin users cannot be suspended.')
         }
-        else
-        {
+        else {
             req.user = user
-            next()
+            return next()
         }
     }
-    catch(error)
-    {
+    catch (error) {
         res.status(400).send(error.message)
     }
 }

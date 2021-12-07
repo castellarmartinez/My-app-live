@@ -1,8 +1,7 @@
 const Joi = require('joi')
 const Payment = require('../models/payment-method')
 
-const PaymentSchema = Joi.object(
-{
+const PaymentSchema = Joi.object({
     method: 
         Joi.string()
         .min(3)
@@ -12,51 +11,40 @@ const PaymentSchema = Joi.object(
 
 // Middlewares
 
-const tryValidMethod = async (req, res, next) => 
-{
+const tryValidMethod = async (req, res, next) => {
     const newMethod = req.body
 
-    try
-    {
+    try {
         await PaymentSchema.validateAsync(newMethod)
-
-        next()
+        return next()
     }
-    catch(error)
-    {
-        if(error.message.includes('"method"'))
-        {
+    catch (error) {
+        if (error.message.includes('"method"')) {
             res.status(400).send('The method\'s name must have a length between ' 
             + '3-32 characters and only contain letters, numbers and spaces.')
         }
-        else
-        {
+        else {
             res.status(400).send('The fields you are trying to add are not allowed.')
         }
     }
 }
 
-const tryMethodUpdate = async (req, res, next) => 
-{
+const tryMethodUpdate = async (req, res, next) => {
     const option = req.params.id
 
-    try
-    {
+    try {
         const exist = await Payment.findOne({option})
 
-        if(!exist)
-        {
+        if (!exist) {
             res.status(400).send('The method you are trying to update' + 
             '/delete does not exist.')
         }
-        else
-        {
+        else {
             req.payment = exist
-            next()
+            return next()
         }
     }
-    catch(error)
-    {
+    catch (error) {
         res.status(400).send('Unexpected error in registered method.')
     }
 }

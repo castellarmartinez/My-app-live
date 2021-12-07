@@ -1,76 +1,64 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 
-const userSchema = new mongoose.Schema(
-{
-    name:
-    {
+const userSchema = new mongoose.Schema({
+    name: {
         type: String,
         required: true
     },
 
-    username:
-    {
+    username: {
         type: String,
         required: true,
         unique: true
     },
 
-    email:
-    {
+    email: {
         type: String,
         required: true,
         lowercase: true,
         unique: true,
     },
 
-    password:
-    {
+    password: {
         type: String,
         required: true,
     },
 
-    phone:
-    {
+    phone: {
         type: Number,
         required: true,
     },
 
-    isActive:
-    {
+    isActive: {
         type: Boolean,
         default: true
     },
 
-    isAdmin:
-    {
+    isAdmin: {
         type: Boolean,
         default: false
     },
 
-    token:
-    {
+    token: {
         type: String,
         default: ''
     }
 })
 
-userSchema.pre('save', function(next)
-{
+userSchema.pre('save', function(next) {
     const user = this
 
-    if(user.isModified('password'))
-    {
+    if (user.isModified('password')) {
         user.password = bcrypt.hashSync(user.password, 8)
     }
 
-    if(user.isModified('name'))
-    {
+    if (user.isModified('name')) {
         user.name = user.name.toLowerCase()
         user.name = user.name.replace(/\b\w/g, c => c.toUpperCase())
     }
 
-    next()
+    return next()
 })
 
 const User = mongoose.model('User', userSchema)

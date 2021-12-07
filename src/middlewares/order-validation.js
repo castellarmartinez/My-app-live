@@ -1,11 +1,10 @@
-const Joi = require("joi");
-const Address = require("../models/address");
+const Joi = require("joi")
+const Address = require("../models/address")
 const Order = require("../models/order")
-const Payment = require("../models/payment-method");
-const Product = require("../models/product");
+const Payment = require("../models/payment-method")
+const Product = require("../models/product")
 
-const OrderSchema = Joi.object(
-{
+const OrderSchema = Joi.object({
     payment: 
         Joi.number()
         .min(1)
@@ -28,42 +27,32 @@ const OrderSchema = Joi.object(
 
 // Funciones usadas para crear los middlewares
 
-function orderErrorMessage(message)
-{
-    if(message.includes('"payment"'))
-    {
+function orderErrorMessage(message) {
+    if (message.includes('"payment"')) {
         return 'You need to use an existing ' +
         'payment method (payment).'
     }
-    else if(message.includes('"state"'))
-    {
+    else if (message.includes('"state"')) {
         return 'Only "open" and "closed" are valid states' +
         ' for new orders.'
     }
-    else if(message.includes('"quantity"'))
-    {
+    else if (message.includes('"quantity"')) {
         return 'The product quantity must be greater than 0.'
     }
-    else if(message.includes('"address"'))
-    {
+    else if(message.includes('"address"')) {
         return 'You need to provide an adress.'
     }
-    else
-    {
+    else {
         return error.message
     }
 }
 
-function stateAdmin(state)
-{
-    let stateValid = false;
+function stateAdmin(state) {
+    let stateValid = false
 
-    switch(state)
-    {
-        case 'preparing':
-        case 'shipping':
-        case 'cancelled':
-        case 'delivered':
+    switch (state) {
+        case 'preparing': case 'shipping':
+        case 'cancelled': case 'delivered':
             stateValid = true
             break
         default:
@@ -73,14 +62,11 @@ function stateAdmin(state)
     return stateValid;
 }
 
-function stateCustomer(state)
-{
+function stateCustomer(state) {
     let stateValid = false;
 
-    switch(state)
-    {
-        case 'confirmed':
-        case 'cancelled':
+    switch (state) {
+        case 'confirmed': case 'cancelled':
             stateValid = true
             break
         default:
@@ -92,99 +78,81 @@ function stateCustomer(state)
 
 // Middlewares
 
-const tryOpenOrder = async (req, res, next) => 
-{
+const tryOpenOrder = async (req, res, next) => {
     const user = req.user
     const order = await Order.findOne({owner: user._id, state: 'open'})
 
-    if(order)
-    {
+    if (order) {
         res.status(409).send('You can\'t have more than one open order.\n' +
         'Close or cancel that order to be able to create another order.')
     }
-    else
-    {
-        next()
+    else {
+        return next()
     }
 }
 
-const tryCanEditOrder = async (req, res, next) => 
-{
+const tryCanEditOrder = async (req, res, next) => {
     const user = req.user
     const order = await Order.findOne({owner: user._id, state: 'open'})
 
-    if(order)
-    {
+    if (order) {
         req.order = order
-        next()
+        return next()
     }
-    else
-    {
+    else {
         res.status(409).send('You don\'t have any open order you can edit.')
     }
 }
 
-const tryValidOrder = async (req, res, next) => 
-{
+const tryValidOrder = async (req, res, next) => {
     const newOrder = req.body
     const user = req.user
 
-    try
-    {
+    try {
         await OrderSchema.validateAsync(newOrder)
         const {payment, address} = newOrder
         const methodExist = await Payment.findOne({option: payment})
         const addressExist = await Address.findOne({owner: user._id, option: address})
 
-        if(!methodExist)
-        {
+        if (!methodExist) {
             throw new Error('"payment"')
         }
-        else if(!addressExist)
-        {
+        else if (!addressExist) {
             throw new Error('"address"')
         }
-        else
-        {
+        else {
             req.payment = methodExist
             req.address = addressExist
-            next()
+            return next()
         }
     }
-    catch(error)
-    {
+    catch (error) {
         const message = orderErrorMessage(error.message)
         res.status(400).send(message)
     }
 }
 
-const tryHaveOrders = async (req, res, next) => 
-{
+const tryHaveOrders = async (req, res, next) => {
     const user = req.user
     const orders = await Order.find({owner: user._id})
 
-    if(orders.length > 0)
-    {
+    if (orders.length > 0) {
         req.orders = orders
-        next()
+        return next()
     }
-    else
-    {
+    else {
         res.status(404).send('You do not have orders.')
     }
 }
 
-const tryValidAddition = async (req, res, next) => 
-{
-    const {quantity} = req.query;
+const tryValidAddition = async (req, res, next) => {
+    const { quantity } = req.query
     const validQuantity = quantity % 1 === 0 && quantity > 0
 
-    if(validQuantity)
-    {
-        next()
+    if (validQuantity) {
+        return next()
     }
-    else
-    {
+    else {
         res.status(400).send('The units to add must be greater than 0.')
     }
 }
@@ -193,73 +161,61 @@ const tryValidElimination = async (req, res, next) =>
 {
     const ID = req.params.id
     const user = req.user
-    const {quantity} = req.query
+    const { quantity } = req.query
     const validQuantity = quantity % 1 === 0 && quantity > 0
 
-    if(!validQuantity)
-    {
+    if (!validQuantity) {
         res.status(400).send('The units to remove must be greater than 0.')
     }
-    else
-    {
+    else {
         const product = await Product.findOne({ID})
         const order = await Order.findOne({owner: user._id, state: "open", 
         "products.product": product._id})
     
-        if(order)
-        {
+        if (order) {
             req.order = order
-            next()
+            return next()
         }
-        else
-        {
+        else {
             res.status(400).send('You do not have an open order with the product '
             + 'you are trying to remove.')
         }
     }
 }
 
-const tryValidStateCustomer = (req, res, next) => 
-{
-    const {state} = req.query
+const tryValidStateCustomer = (req, res, next) => {
+    const { state } = req.query
 
-    if(stateCustomer(state))
-    {
-        next()
+    if (stateCustomer(state)) {
+        return next()
     }
-    else
-    {
+    else {
         res.status(400).send('The state could not be changed.\n' +
          'Only "confirmed" and "cancelled" are valid.')
     }
 }
 
-const tryValidStateAdmin = (req, res, next) => 
-{
-    const {state} = req.query
+const tryValidStateAdmin = (req, res, next) => {
+    const { state } = req.query
 
-    if(stateAdmin(state))
-    {
-        next()
+    if (stateAdmin(state)) {
+        return next()
     }
-    else
-    {
+    else {
         res.status(400).send('The state could not be changed.\n' +
         'Only "preparing", "shipping", "cancelled" and "delivered" are valid.')
     }
 }
 
-const tryOrderExist = async (req, res, next) => 
-{
-    const {orderId} = req.query
+const tryOrderExist = async (req, res, next) => {
+    const { orderId } = req.query
     const order = await Order.findOne({orderId})
 
-    if(order)
-    {
+    if (order) {
         req.order = order
-        next()
+        return next()
     }
-    else{
+    else {
         res.status(404).send('The order you are trying to edit does not exist.')
     }
 }
