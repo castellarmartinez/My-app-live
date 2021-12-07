@@ -29,17 +29,14 @@ const router = express.Router();
  *              description: You need admin privileges to perform this operation.
  */
 
-router.post('/add', adminAuthentication, tryValidMethod, async (req, res) => 
-{
+router.post('/add', adminAuthentication, tryValidMethod, async (req, res) => {
     const {method} = req.body
     const success = await addPaymentMethod(method)
 
-    if(success)
-    {
+    if (success) {
         res.status(201).send('The payment method has been added.')
     }
-    else
-    {
+    else {
         res.status(500).send('Unable to add the payment method.')
     }
 })
@@ -64,16 +61,13 @@ router.post('/add', adminAuthentication, tryValidMethod, async (req, res) =>
  *              description:  You need to be authenticate to perform this operation.
  */
 
-router.get('/list', userAuthentication, async (req, res) => 
-{
+router.get('/list', userAuthentication, async (req, res) => {
     const methods = await getPaymentMethods()
 
-    if(methods)
-    {
+    if (methods) {
         res.status(200).json(methods)
     }
-    else
-    {
+    else {
         res.status(500).send('Could not access payment methods.')
     }
 })
@@ -106,18 +100,15 @@ router.get('/list', userAuthentication, async (req, res) =>
  */
 
 router.put('/update/:id/', adminAuthentication, tryMethodUpdate, 
-tryValidMethod, async (req, res) => 
-{
+tryValidMethod, async (req, res) => {
     const update = req.body
     const option = req.params.id
     const success = await updatePaymentMethods(option, update)
     
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The product has been updated.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not update the product.')
     }
 })
@@ -144,17 +135,14 @@ tryValidMethod, async (req, res) =>
  */
 
 router.delete('/delete/:id/', adminAuthentication, tryMethodUpdate, 
-async (req, res) => 
-{
+async (req, res) => {
     const payment = req.payment
     const success = await deletePaymentMethods(payment)
 
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The payment method has been deleted.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not delete the payment method.')
     }
 })

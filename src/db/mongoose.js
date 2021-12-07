@@ -1,36 +1,30 @@
 const mongoose = require('mongoose')
-const {module: config} = require('../config')
+const { module: config } = require('../config')
 const User = require('../models/user')
 
 const uri = `mongodb+srv://${config.MONGODB_USER}:${config.MONGODB_PASSWORD}\
 @${config.MONGODB_CLUSTER}/${config.DB_NAME}?retryWrites=true&w=majority`
 
-async function database()
-{
-    try
-    {
+async function database() {
+    try {
         await mongoose.connect(uri)
         console.info('Connected to the database:', config.DB_NAME)
 
         const users = await User.find({isAdmin: true})
 
-        if(users.length === 0)
-        {
+        if (users.length === 0) {
             await addAdminUser()
         }
     }
-    catch(err)
-    {
-        console.error(err.message)
+    catch (error) {
+        console.error(error.message)
     }
 }
 
 database()
 
-async function addAdminUser()
-{
-    const admin = new User(
-    {
+async function addAdminUser() {
+    const admin = new User({
         name: 'Administrator',
         username: 'Admin',
         email: 'admin@delilahresto.com',

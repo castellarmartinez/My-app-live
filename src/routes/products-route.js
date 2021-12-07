@@ -36,23 +36,20 @@ const router = express.Router()
  *              description: You need admin privileges.
  */
 
- router.post('/add/:id/', adminAuthentication, tryRegisteredProduct, 
- tryValidProduct, async (req, res) => 
- {
-     const newProduct = req.body
-     const ID = req.params.id
-     const success = await addProduct(newProduct, ID)
- 
-     if(success)
-     {
-         res.status(201).send('The product has been added.')
-     }
-     else
-     {
-         res.status(500).send('Unable to add the product.')
-     }
- })
- 
+router.post('/add/:id/', adminAuthentication, tryRegisteredProduct, 
+tryValidProduct, async (req, res) => {
+    const newProduct = req.body
+    const ID = req.params.id
+    const success = await addProduct(newProduct, ID)
+
+    if (success) {
+        res.status(201).send('The product has been added.')
+    }
+    else {
+        res.status(500).send('Unable to add the product.')
+    }
+})
+
 /**
  * @swagger
  * /products/list:
@@ -73,16 +70,13 @@ const router = express.Router()
  *              description: Internal error.
  */
 
-router.get('/list', cacheProducts, async (req, res) => 
-{
+router.get('/list', cacheProducts, async (req, res) => {
     const products = await getProducts()
 
-    if(products)
-    {
+    if (products) {
         res.status(200).json(products)
     }
-    else
-    {
+    else {
         res.status(500).send('Could not access products.')
     }
 })
@@ -115,18 +109,15 @@ router.get('/list', cacheProducts, async (req, res) =>
  */
 
 router.put('/update/:id/', adminAuthentication, 
-tryProductExist, tryValidProduct, async (req, res) => 
-{
+tryProductExist, tryValidProduct, async (req, res) => {
     const update = req.body
     const ID = req.params.id
     const success = await updateProduct(ID, update)
 
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The product has been updated.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not update the product.')
     }
 })
@@ -153,17 +144,14 @@ tryProductExist, tryValidProduct, async (req, res) =>
  */
 
 router.delete('/delete/:id/',  adminAuthentication, tryProductExist, 
-async (req, res) => 
-{
+async (req, res) => {
     const ID = req.params.id
     const success = await deleteProduct(ID)
 
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The product has been deleted.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not delete the product.')
     }
 })

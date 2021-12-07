@@ -1,39 +1,32 @@
 {
-  "name": "My-app-live",
+  "name": "my-app-live",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "bcrypt": "^5.0.1",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "helmet": "^4.6.0",
-    "joi": "^17.4.2",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.5",
-    "redis": "^3.1.2",
-    "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.1.6"
-  },
-  "devDependencies": {
-    "chai": "^4.3.4",
-    "chai-http": "^4.3.0",
-    "mocha": "^9.1.2"
-  },
+  "main": "ecosystem.config.js",
   "scripts": {
-    "test": "mocha src/tests/*.js",
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/castellarmartinez/my-app-live.git"
+    "url": "git+https://github.com/castellarmartinez/My-app-live.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/castellarmartinez/my-app-live/issues"
+    "url": "https://github.com/castellarmartinez/My-app-live/issues"
   },
-  "homepage": "https://gitlab.com/castellarmartinez/my-app-live#readme"
+  "homepage": "https://github.com/castellarmartinez/My-app-live#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "joi": "^17.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.14",
+    "redis": "^4.0.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.2.0"
+  }
 }

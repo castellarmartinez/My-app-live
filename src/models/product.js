@@ -1,21 +1,17 @@
 const mongoose = require('mongoose')
 
-const Product = mongoose.model('Product',
-{ 
-    ID:
-    {
+const Product = mongoose.model('Product', { 
+    ID: {
         type: String,
         required: true
     },
 
-    name:
-    {
+    name: {
         type: String,
         required: true
     },
 
-    price:
-    {
+    price: {
         type: Number,
         required: true
     },

@@ -1,9 +1,8 @@
-const {config} = require('dotenv')
+const { config } = require('dotenv')
 
 config()
 
-exports.module = 
-{
+exports.module = {
     APP_PORT: process.env.APP_PORT,
     MONGODB_CLUSTER: process.env.MONGODB_CLUSTER,
     MONGODB_USER: process.env.MONGODB_USER,

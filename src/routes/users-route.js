@@ -30,18 +30,15 @@ const router = express.Router()
  *              description:  Username or email already in use.
  */
 
- router.post('/register', tryValidUser, tryRegisteredUser, async (req, res) => 
-{
+ router.post('/register', tryValidUser, tryRegisteredUser, async (req, res) => {
     const newUser = req.body
     const success = await addUser(newUser)
  
-    if(success)
-    {
+    if (success) {
         res.status(201).send('Congratulations!\nYour account has been successfully'
         + ' created.') 
     }  
-    else
-    {
+    else {
         res.status(500).send('Your account could not be created.')
     }
 })
@@ -66,8 +63,7 @@ const router = express.Router()
  *              description: User or password is invalid.
  */
 
-router.post('/login', tryLogin, async (req, res) => 
-{
+router.post('/login', tryLogin, async (req, res) => {
     const user = req.user
     const token = await userLogIn(user)
 
@@ -89,17 +85,14 @@ router.post('/login', tryLogin, async (req, res) =>
  *              description: You need to be logged in.
  */
 
-router.post('/logout', tryLogout, async (req, res) => 
-{
+router.post('/logout', tryLogout, async (req, res) => {
     const user = req.user
     const success = await userLogOut(user)
 
-    if(success)
-    {
+    if (success) {
         res.status(200).send('Logged out successfully.')
     }
-    else
-    {
+    else {
         res.status(500).send('Unable to log out.')
     }
 })
@@ -124,18 +117,15 @@ router.post('/logout', tryLogout, async (req, res) =>
  *              description: Error adding a new address.
  */
 
-router.post('/addAddress', customerAuthentication, tryValidAddress, async (req, res) => 
-{
+router.post('/addAddress', customerAuthentication, tryValidAddress, async (req, res) => {
     const {address} = req.body
     const user = req.user
     const success = await addAddress(address, user)
 
-    if(success)
-    {
+    if (success) {
         res.status(201).send('You have added a new address.')
     }
-    else
-    {
+    else {
         res.status(201).send('Unable to add address.')
     }
 })
@@ -160,16 +150,13 @@ router.post('/addAddress', customerAuthentication, tryValidAddress, async (req, 
  *              description: You need admin privileges to perform this operation
  */
 
-router.get('/list', adminAuthentication, async (req, res) => 
-{
+router.get('/list', adminAuthentication, async (req, res) => {
     const users = await getUsers()
 
-    if(users)
-    {
+    if (users) {
         res.status(200).json(users)
     }
-    else
-    {
+    else {
         res.status(500).send('Could not access registered users.')
     }
 })
@@ -194,17 +181,14 @@ router.get('/list', adminAuthentication, async (req, res) =>
  *              description: You need to be logged in to perform this operation.
  */
 
-router.get('/addressList', customerAuthentication, async (req, res) => 
-{
+router.get('/addressList', customerAuthentication, async (req, res) => {
     const user = req.user
     const users = await getAddressList(user)
 
-    if(users)
-    {
+    if (users) {
         res.status(200).json(users)
     }
-    else
-    {
+    else {
         res.status(500).send('Could not access registered users.')
     }
 })
@@ -229,17 +213,14 @@ router.get('/addressList', customerAuthentication, async (req, res) =>
  *              description: You need admin privileges to perform this operation.
  */
 
-router.put('/suspend', adminAuthentication, trySuspend, async (req, res) => 
-{
+router.put('/suspend', adminAuthentication, trySuspend, async (req, res) => {
     const user = req.user
     const {success, message} = await suspendUser(user)
 
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The user has been ' + message) 
     }  
-    else
-    {
+    else {
         res.status(500).send('Could not suspend user.')
     }
 })

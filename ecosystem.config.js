@@ -1,7 +1,5 @@
-module.exports = 
-{
-    apps: 
-    [{
+module.exports = {
+    apps: [{
         name: 'api',
         script: './src/index.js',
         watch: true,

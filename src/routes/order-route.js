@@ -45,8 +45,7 @@ const router = express.Router()
  */
 
 router.post('/add/:id/', customerAuthentication, tryProductExist, 
-tryOpenOrder, tryValidOrder, async (req, res) => 
-{
+tryOpenOrder, tryValidOrder, async (req, res) => {
     const product = req.product
     const payment = req.payment
     const address = req.address
@@ -55,12 +54,10 @@ tryOpenOrder, tryValidOrder, async (req, res) =>
 
     const success = await addOrder(product, quantity, payment, address, state, user)
 
-    if(success)
-    {
+    if (success) {
         res.status(201).send('The order has been added.')
     }
-    else
-    {
+    else {
         res.status(500).send('Unable to add order.')
     }
 })
@@ -88,16 +85,13 @@ tryOpenOrder, tryValidOrder, async (req, res) =>
  *              description: Internal error.
  */
 
-router.get('/list', adminAuthentication, async (req, res) => 
-{
+router.get('/list', adminAuthentication, async (req, res) => {
     const orders = await getOrders()
 
-    if(orders)
-    {
+    if (orders) {
         res.status(200).json(orders)
     }
-    else
-    {
+    else {
         res.status(500).send('Could not access orders.')
     }
 })
@@ -127,17 +121,14 @@ router.get('/list', adminAuthentication, async (req, res) =>
  *              description: Internal error.
  */
 
-router.get('/history', customerAuthentication, tryHaveOrders, async (req, res) => 
-{
+router.get('/history', customerAuthentication, tryHaveOrders, async (req, res) => {
     const orders = req.orders
     const ordersDetails = await getOrdersByUser(orders)
 
-    if(ordersDetails)
-    {
+    if (ordersDetails) {
         res.status(200).json(ordersDetails)
     }
-    else
-    {
+    else {
         res.status(500).send('Could not access this user\'s orders.')
     }
 })
@@ -170,20 +161,17 @@ router.get('/history', customerAuthentication, tryHaveOrders, async (req, res) =
  */
 
 router.put('/addProduct/:id/', customerAuthentication, tryCanEditOrder, 
-tryProductExist, tryValidAddition, async (req, res) => 
-{
+tryProductExist, tryValidAddition, async (req, res) => {
     const order = req.order
     const {quantity} = req.query
     const quantityToAdd = parseInt(quantity, 10)
     const product = req.product
     const success = await addProductToOrder(product, quantityToAdd, order)
     
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The product has been added to the order.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not add the product.')
     }
 })
@@ -216,20 +204,17 @@ tryProductExist, tryValidAddition, async (req, res) =>
  */
 
 router.put('/removeProduct/:id/', customerAuthentication, tryCanEditOrder,
-tryProductExist, tryValidElimination, async (req, res) => 
-{
+tryProductExist, tryValidElimination, async (req, res) => {
     const {quantity} = req.query
     const quantityToRemove = parseInt(quantity, 10)
     const product = req.product
     const order = req.order
     const success = await removeProductFromOrder(product, quantityToRemove, order)
     
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The product has been deleted/reduced from the order.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not delete/reduce the product.')
     }
 })
@@ -259,18 +244,15 @@ tryProductExist, tryValidElimination, async (req, res) =>
  */
 
 router.put('/updatePayment/:id', customerAuthentication, tryCanEditOrder, 
-tryMethodUpdate, async (req, res) => 
-{
+tryMethodUpdate, async (req, res) => {
     const payment = req.payment
     const order = req.order
     const success = await updatePaymentInOrder(payment, order)
     
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The payment method has been changed.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not change the payment method.')
     }
 })
@@ -300,18 +282,15 @@ tryMethodUpdate, async (req, res) =>
  */
 
 router.put('/updateAddress', customerAuthentication, tryCanEditOrder, 
-tryAddressExist, async (req, res) => 
-{
+tryAddressExist, async (req, res) => {
     const address = req.address
     const order = req.order
     const success = await updateAddress(address, order)
     
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The address has been updated.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not change the address.')
     }
 })
@@ -346,18 +325,15 @@ tryAddressExist, async (req, res) =>
  */
 
 router.put('/updateState/customer', customerAuthentication, tryCanEditOrder, 
-tryValidStateCustomer, async (req, res) => 
-{
+tryValidStateCustomer, async (req, res) => {
     const {state} = req.query
     const order = req.order
     const success = await updateOrderState(state, order)
     
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The order\'s state has been changed.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not change the order\'s state.')
     }
 })
@@ -396,18 +372,15 @@ tryValidStateCustomer, async (req, res) =>
  */
 
 router.put('/updateState/admin', adminAuthentication, tryOrderExist, 
-tryValidStateAdmin, async (req, res) => 
-{
+tryValidStateAdmin, async (req, res) => {
     const {state} = req.query
     const order = req.order
     const success = await updateOrderState(state, order)
     
-    if(success)
-    {
+    if (success) {
         res.status(200).send('The order\'s state has been changed.')
     }
-    else
-    {
+    else {
         res.status(500).send('Could not change the order\'s state.')
     }
 })

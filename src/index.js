@@ -5,8 +5,7 @@ const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
 const swaggerOptions = require('./utils/swaggerOptions')
 const helmet = require('helmet')
-const {module: config} = require('./config')
-
+const { module: config } = require('./config')
 const swaggerSpecs = swaggerJsDoc(swaggerOptions)
 
 const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives()
@@ -26,8 +25,7 @@ app.use('/products', require('./routes/products-route'))
 app.use('/payment', require('./routes/payment-route'))
 app.use('/orders', require('./routes/order-route'))
 
-app.listen(port, () => 
-{
+app.listen(port, () => {
     console.log(`Aplicación escuchando en puerto: ${port}`)
     console.log(`La aplicación se está ejecutando en el ambiente: '${environment}'`)
     console.log(`Description: '${apiDescription}'`)
