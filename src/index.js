@@ -19,6 +19,7 @@ const app = express()
 
 app.use(express.json())
 app.use(helmet({ contentSecurityPolicy: { directives: cspDefaults }}))
+
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
 app.use('/users', require('./routes/users-route'))
 app.use('/products', require('./routes/products-route'))

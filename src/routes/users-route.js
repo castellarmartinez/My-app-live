@@ -99,7 +99,7 @@ router.post('/logout', tryLogout, async (req, res) => {
 
 /**
  * @swagger
- * /users/addAddress:
+ * /users/address:
  *  post:
  *      tags: [Users]
  *      summary: Add new address in the address book.
@@ -117,7 +117,7 @@ router.post('/logout', tryLogout, async (req, res) => {
  *              description: Error adding a new address.
  */
 
-router.post('/addAddress', customerAuthentication, tryValidAddress, async (req, res) => {
+router.post('/address', customerAuthentication, tryValidAddress, async (req, res) => {
     const {address} = req.body
     const user = req.user
     const success = await addAddress(address, user)
@@ -132,7 +132,7 @@ router.post('/addAddress', customerAuthentication, tryValidAddress, async (req, 
 
 /**
  * @swagger
- * /users/list:
+ * /users:
  *  get:
  *      tags: [Users]
  *      summary: Obtain all accounts registered.
@@ -150,7 +150,7 @@ router.post('/addAddress', customerAuthentication, tryValidAddress, async (req, 
  *              description: You need admin privileges to perform this operation
  */
 
-router.get('/list', adminAuthentication, async (req, res) => {
+router.get('/', adminAuthentication, async (req, res) => {
     const users = await getUsers()
 
     if (users) {
@@ -163,7 +163,7 @@ router.get('/list', adminAuthentication, async (req, res) => {
 
 /**
  * @swagger
- * /users/addressList:
+ * /users:
  *  get:
  *      tags: [Users]
  *      summary: Obtain the user's address book
@@ -181,7 +181,7 @@ router.get('/list', adminAuthentication, async (req, res) => {
  *              description: You need to be logged in to perform this operation.
  */
 
-router.get('/addressList', customerAuthentication, async (req, res) => {
+router.get('/addressbook', customerAuthentication, async (req, res) => {
     const user = req.user
     const users = await getAddressList(user)
 

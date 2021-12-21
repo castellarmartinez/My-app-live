@@ -15,7 +15,7 @@ const router = express.Router()
 
 /**
  * @swagger
- * /orders/add/{productId}:
+ * /orders/{productId}:
  *  post:
  *      tags: [Orders]
  *      summary: Make an order.
@@ -44,7 +44,7 @@ const router = express.Router()
  *              description: Internal error.
  */
 
-router.post('/add/:id/', customerAuthentication, tryProductExist, 
+router.post('/:id/', customerAuthentication, tryProductExist, 
 tryOpenOrder, tryValidOrder, async (req, res) => {
     const product = req.product
     const payment = req.payment
@@ -64,7 +64,7 @@ tryOpenOrder, tryValidOrder, async (req, res) => {
 
 /**
  * @swagger
- * /orders/list:
+ * /orders/:
  *  get:
  *      tags: [Orders]
  *      summary: Obtain all orders.
@@ -85,7 +85,7 @@ tryOpenOrder, tryValidOrder, async (req, res) => {
  *              description: Internal error.
  */
 
-router.get('/list', adminAuthentication, async (req, res) => {
+router.get('/', adminAuthentication, async (req, res) => {
     const orders = await getOrders()
 
     if (orders) {
@@ -221,7 +221,7 @@ tryProductExist, tryValidElimination, async (req, res) => {
 
 /**
  * @swagger
- * /orders/updatePayment/{option}:
+ * /orders/payment/{option}:
  *  put:
  *      tags: [Orders]
  *      summary: Change payment method in an order. 
@@ -243,7 +243,7 @@ tryProductExist, tryValidElimination, async (req, res) => {
  *              description: Internal error.
  */
 
-router.put('/updatePayment/:id', customerAuthentication, tryCanEditOrder, 
+router.put('/payment/:id', customerAuthentication, tryCanEditOrder, 
 tryMethodUpdate, async (req, res) => {
     const payment = req.payment
     const order = req.order
@@ -259,7 +259,7 @@ tryMethodUpdate, async (req, res) => {
 
 /**
  * @swagger
- * /orders/updateAddress:
+ * /orders/address:
  *  put:
  *      tags: [Orders]
  *      summary: Change orders address. 
@@ -281,7 +281,7 @@ tryMethodUpdate, async (req, res) => {
  *              description: Internal error.
  */
 
-router.put('/updateAddress', customerAuthentication, tryCanEditOrder, 
+router.put('/address', customerAuthentication, tryCanEditOrder, 
 tryAddressExist, async (req, res) => {
     const address = req.address
     const order = req.order
@@ -297,7 +297,7 @@ tryAddressExist, async (req, res) => {
 
 /**
  * @swagger
- * /orders/updateState/customer:
+ * /orders/state/customer:
  *  put:
  *      tags: [Orders]
  *      summary: Change the state in an order. 
@@ -324,7 +324,7 @@ tryAddressExist, async (req, res) => {
  *              description: Internal error.
  */
 
-router.put('/updateState/customer', customerAuthentication, tryCanEditOrder, 
+router.put('/state/customer', customerAuthentication, tryCanEditOrder, 
 tryValidStateCustomer, async (req, res) => {
     const {state} = req.query
     const order = req.order
@@ -340,7 +340,7 @@ tryValidStateCustomer, async (req, res) => {
 
 /**
  * @swagger
- * /orders/updateState/admin:
+ * /orders/state/admin:
  *  put:
  *      tags: [Orders]
  *      summary: Change the state or the orders as an admin. 
@@ -371,7 +371,7 @@ tryValidStateCustomer, async (req, res) => {
  *              description: Internal error.
  */
 
-router.put('/updateState/admin', adminAuthentication, tryOrderExist, 
+router.put('/state/admin', adminAuthentication, tryOrderExist, 
 tryValidStateAdmin, async (req, res) => {
     const {state} = req.query
     const order = req.order

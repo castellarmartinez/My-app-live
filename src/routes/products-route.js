@@ -11,7 +11,7 @@ const router = express.Router()
 
 /**
  * @swagger
- * /products/add/{productId}:
+ * /products/{productId}:
  *  post:
  *      tags: [Products]
  *      summary: Add a product to the menu.
@@ -36,7 +36,7 @@ const router = express.Router()
  *              description: You need admin privileges.
  */
 
-router.post('/add/:id/', adminAuthentication, tryRegisteredProduct, 
+router.post('/:id/', adminAuthentication, tryRegisteredProduct, 
 tryValidProduct, async (req, res) => {
     const newProduct = req.body
     const ID = req.params.id
@@ -52,7 +52,7 @@ tryValidProduct, async (req, res) => {
 
 /**
  * @swagger
- * /products/list:
+ * /products/:
  *  get:
  *      tags: [Products]
  *      summary: Obtain all products in the menu.
@@ -70,7 +70,7 @@ tryValidProduct, async (req, res) => {
  *              description: Internal error.
  */
 
-router.get('/list', cacheProducts, async (req, res) => {
+router.get('/', cacheProducts, async (req, res) => {
     const products = await getProducts()
 
     if (products) {
@@ -83,7 +83,7 @@ router.get('/list', cacheProducts, async (req, res) => {
 
 /**
  * @swagger
- * /products/update/{productId}:
+ * /products/{productId}:
  *  put:
  *      tags: [Products]
  *      summary: Edit a product on the menu.
@@ -108,7 +108,7 @@ router.get('/list', cacheProducts, async (req, res) => {
  *              description: You need admin privileges to peform this operation.
  */
 
-router.put('/update/:id/', adminAuthentication, 
+router.put('/:id/', adminAuthentication, 
 tryProductExist, tryValidProduct, async (req, res) => {
     const update = req.body
     const ID = req.params.id
@@ -124,7 +124,7 @@ tryProductExist, tryValidProduct, async (req, res) => {
 
 /**
  * @swagger
- * /products/delete/{productId}:
+ * /products/{productId}:
  *  delete:
  *      tags: [Products]
  *      summary: Delete a product from the menu.
@@ -143,7 +143,7 @@ tryProductExist, tryValidProduct, async (req, res) => {
  *              description: You need admin privileges to perform this operation.
  */
 
-router.delete('/delete/:id/',  adminAuthentication, tryProductExist, 
+router.delete('/:id/',  adminAuthentication, tryProductExist, 
 async (req, res) => {
     const ID = req.params.id
     const success = await deleteProduct(ID)

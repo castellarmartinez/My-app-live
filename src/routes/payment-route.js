@@ -9,7 +9,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /payment/add:
+ * /payment:
  *  post:
  *      tags: [Payment methods]
  *      summary: Add a new payment method.
@@ -29,7 +29,7 @@ const router = express.Router();
  *              description: You need admin privileges to perform this operation.
  */
 
-router.post('/add', adminAuthentication, tryValidMethod, async (req, res) => {
+router.post('/', adminAuthentication, tryValidMethod, async (req, res) => {
     const {method} = req.body
     const success = await addPaymentMethod(method)
 
@@ -43,7 +43,7 @@ router.post('/add', adminAuthentication, tryValidMethod, async (req, res) => {
 
 /**
  * @swagger
- * /payment/list:
+ * /payment/:
  *  get:
  *      tags: [Payment methods]
  *      summary: Obtain all payment methods.
@@ -61,7 +61,7 @@ router.post('/add', adminAuthentication, tryValidMethod, async (req, res) => {
  *              description:  You need to be authenticate to perform this operation.
  */
 
-router.get('/list', userAuthentication, async (req, res) => {
+router.get('/', userAuthentication, async (req, res) => {
     const methods = await getPaymentMethods()
 
     if (methods) {
@@ -74,7 +74,7 @@ router.get('/list', userAuthentication, async (req, res) => {
 
 /**
  * @swagger
- * /payment/update/{option}:
+ * /payment/{option}:
  *  put:
  *      tags: [Payment methods]
  *      summary: Update a payment method.
@@ -99,7 +99,7 @@ router.get('/list', userAuthentication, async (req, res) => {
  *              description: You need admin privileges to perform this operation.
  */
 
-router.put('/update/:id/', adminAuthentication, tryMethodUpdate, 
+router.put('/:id/', adminAuthentication, tryMethodUpdate, 
 tryValidMethod, async (req, res) => {
     const update = req.body
     const option = req.params.id
@@ -115,7 +115,7 @@ tryValidMethod, async (req, res) => {
 
 /**
  * @swagger
- * /payment/delete/{option}:
+ * /payment/{option}:
  *  delete:
  *      tags: [Payment methods]
  *      summary: Delete a payment method.
@@ -134,7 +134,7 @@ tryValidMethod, async (req, res) => {
  *              description: You need admin privileges to perform this operation.
  */
 
-router.delete('/delete/:id/', adminAuthentication, tryMethodUpdate, 
+router.delete('/:id/', adminAuthentication, tryMethodUpdate, 
 async (req, res) => {
     const payment = req.payment
     const success = await deletePaymentMethods(payment)
