@@ -3,6 +3,7 @@ const { config } = require('dotenv')
 config()
 
 exports.module = {
+    URL_HOST: process.env.URL_HOST,
     APP_PORT: process.env.APP_PORT,
     MONGODB_CLUSTER: process.env.MONGODB_CLUSTER,
     MONGODB_USER: process.env.MONGODB_USER,

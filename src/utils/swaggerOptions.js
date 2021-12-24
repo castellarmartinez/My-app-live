@@ -1,3 +1,5 @@
+const { module: config } = require('../config')
+
 const swaggerOptions = {
     definition: {
         openapi: "3.0.0",
@@ -9,7 +11,7 @@ const swaggerOptions = {
         },
 
         servers: [{
-            url: "http://first-deploy-506016382.us-east-1.elb.amazonaws.com/api",
+            url: config.URL_HOST,
             description: 'Local server'
         }],
 
