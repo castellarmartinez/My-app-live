@@ -72,7 +72,7 @@ router.post('/login', tryLogin, async (req, res) => {
     const token = await userLogIn(user)
 
     res.status(200).json({
-        message: 'You are now logged in. Your token for this session:\n',
+        message: 'You are now logged in. Your token for this session:',
         token: token
     })
 })
@@ -181,7 +181,7 @@ router.get('/', adminAuthentication, async (req, res) => {
 
 /**
  * @swagger
- * /users:
+ * /users/addressbook:
  *  get:
  *      tags: [Users]
  *      summary: Obtain the user's address book
@@ -201,10 +201,12 @@ router.get('/', adminAuthentication, async (req, res) => {
 
 router.get('/addressbook', customerAuthentication, async (req, res) => {
     const user = req.user
-    const users = await getAddressList(user)
+    const addresses = await getAddressList(user)
 
-    if (users) {
-        res.status(200).json(users)
+    if (addresses) {
+        res.status(200).json({
+            address_list: addresses
+        })
     }
     else {
         res.status(500).json({

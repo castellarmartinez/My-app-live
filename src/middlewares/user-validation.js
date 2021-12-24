@@ -129,17 +129,18 @@ const tryLogin = async (req, res, next) => {
         if (!correctPassword) {
             throw new Error('The password you entered is incorrect.')
         }
-
-        if (user.token !== '') {
-            throw new Error('You are trying to log in again. ' +
-            'This is your token, in case you forgot it:\n' + 
-            user.token)
-        }
-
+        
         if (!user.isActive) {
             throw new Error('The user is suspended.')
         }
 
+        if (user.token !== '') {
+            return res.status(200).json({
+                message: 'You are trying to log in again.',
+                token: user.token
+            })
+        }
+        
         req.user = user
         return next()
     }
