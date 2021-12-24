@@ -55,10 +55,14 @@ tryOpenOrder, tryValidOrder, async (req, res) => {
     const success = await addOrder(product, quantity, payment, address, state, user)
 
     if (success) {
-        res.status(201).send('The order has been added.')
+        res.status(201).json({
+            message: 'The order has been added.'
+        })
     }
     else {
-        res.status(500).send('Unable to add order.')
+        res.status(500).json({
+            error: 'Unable to add order.'
+        })
     }
 })
 
@@ -89,10 +93,14 @@ router.get('/', adminAuthentication, async (req, res) => {
     const orders = await getOrders()
 
     if (orders) {
-        res.status(200).json(orders)
+        res.status(200).json({
+            orders_list: orders
+        })
     }
     else {
-        res.status(500).send('Could not access orders.')
+        res.status(500).json({
+            error: 'Could not access orders.'
+        })
     }
 })
 
@@ -126,10 +134,14 @@ router.get('/history', customerAuthentication, tryHaveOrders, async (req, res) =
     const ordersDetails = await getOrdersByUser(orders)
 
     if (ordersDetails) {
-        res.status(200).json(ordersDetails)
+        res.status(200).json({
+            my_orders: ordersDetails
+        })
     }
     else {
-        res.status(500).send('Could not access this user\'s orders.')
+        res.status(500).json({
+            error: 'Could not access this user\'s orders.'
+        })
     }
 })
 
@@ -169,10 +181,14 @@ tryProductExist, tryValidAddition, async (req, res) => {
     const success = await addProductToOrder(product, quantityToAdd, order)
     
     if (success) {
-        res.status(200).send('The product has been added to the order.')
+        res.status(200).json({
+            message: 'The product has been added to the order.'
+        })
     }
     else {
-        res.status(500).send('Could not add the product.')
+        res.status(500).json({
+            error: 'Could not add the product.'
+        })
     }
 })
 
@@ -212,10 +228,14 @@ tryProductExist, tryValidElimination, async (req, res) => {
     const success = await removeProductFromOrder(product, quantityToRemove, order)
     
     if (success) {
-        res.status(200).send('The product has been deleted/reduced from the order.')
+        res.status(200).json({
+            message: 'The product has been deleted/reduced from the order.'
+        })
     }
     else {
-        res.status(500).send('Could not delete/reduce the product.')
+        res.status(500).json({
+            error: 'Could not delete/reduce the product.'
+        })
     }
 })
 
@@ -250,10 +270,14 @@ tryMethodUpdate, async (req, res) => {
     const success = await updatePaymentInOrder(payment, order)
     
     if (success) {
-        res.status(200).send('The payment method has been changed.')
+        res.status(200).json({
+            message: 'The payment method has been changed.'
+        })
     }
     else {
-        res.status(500).send('Could not change the payment method.')
+        res.status(500).json({
+            error: 'Could not change the payment method.'
+        })
     }
 })
 
@@ -288,10 +312,14 @@ tryAddressExist, async (req, res) => {
     const success = await updateAddress(address, order)
     
     if (success) {
-        res.status(200).send('The address has been updated.')
+        res.status(200).json({
+            message: 'The address has been updated.'
+        })
     }
     else {
-        res.status(500).send('Could not change the address.')
+        res.status(500).json({
+            error: 'Could not change the address.'
+        })
     }
 })
 
@@ -331,10 +359,14 @@ tryValidStateCustomer, async (req, res) => {
     const success = await updateOrderState(state, order)
     
     if (success) {
-        res.status(200).send('The order\'s state has been changed.')
+        res.status(200).json({
+            message: 'The order\'s state has been changed.'
+        })
     }
     else {
-        res.status(500).send('Could not change the order\'s state.')
+        res.status(500).json({
+            error: 'Could not change the order\'s state.'
+        })
     }
 })
 
@@ -378,10 +410,14 @@ tryValidStateAdmin, async (req, res) => {
     const success = await updateOrderState(state, order)
     
     if (success) {
-        res.status(200).send('The order\'s state has been changed.')
+        res.status(200).json({
+            message: 'The order\'s state has been changed.'
+        })
     }
     else {
-        res.status(500).send('Could not change the order\'s state.')
+        res.status(500).json({
+            error: 'Could not change the order\'s state.'
+        })
     }
 })
 

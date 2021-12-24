@@ -83,8 +83,10 @@ const tryOpenOrder = async (req, res, next) => {
     const order = await Order.findOne({owner: user._id, state: 'open'})
 
     if (order) {
-        res.status(409).send('You can\'t have more than one open order.\n' +
-        'Close or cancel that order to be able to create another order.')
+        res.status(409).json({
+            error: 'You can\'t have more than one open order.\n' +
+            'Close or cancel that order to be able to create another order.'
+        })
     }
     else {
         return next()
@@ -100,7 +102,9 @@ const tryCanEditOrder = async (req, res, next) => {
         return next()
     }
     else {
-        res.status(409).send('You don\'t have any open order you can edit.')
+        res.status(409).json({
+            error: 'You don\'t have any open order you can edit.'
+        })
     }
 }
 
@@ -128,7 +132,10 @@ const tryValidOrder = async (req, res, next) => {
     }
     catch (error) {
         const message = orderErrorMessage(error.message)
-        res.status(400).send(message)
+
+        res.status(400).json({
+            error: message
+        })
     }
 }
 
@@ -141,7 +148,9 @@ const tryHaveOrders = async (req, res, next) => {
         return next()
     }
     else {
-        res.status(404).send('You do not have orders.')
+        res.status(404).json({
+            error: 'You do not have orders.'
+        })
     }
 }
 
@@ -153,7 +162,9 @@ const tryValidAddition = async (req, res, next) => {
         return next()
     }
     else {
-        res.status(400).send('The units to add must be greater than 0.')
+        res.status(400).json({
+            error: 'The units to add must be greater than 0.'
+        })
     }
 }
 
@@ -165,7 +176,9 @@ const tryValidElimination = async (req, res, next) =>
     const validQuantity = quantity % 1 === 0 && quantity > 0
 
     if (!validQuantity) {
-        res.status(400).send('The units to remove must be greater than 0.')
+        res.status(400).json({
+            error: 'The units to remove must be greater than 0.'
+        })
     }
     else {
         const product = await Product.findOne({ID})
@@ -177,8 +190,10 @@ const tryValidElimination = async (req, res, next) =>
             return next()
         }
         else {
-            res.status(400).send('You do not have an open order with the product '
-            + 'you are trying to remove.')
+            res.status(400).json({
+                error: 'You do not have an open order with the product ' 
+                + 'you are trying to remove.'
+            })
         }
     }
 }
@@ -190,8 +205,10 @@ const tryValidStateCustomer = (req, res, next) => {
         return next()
     }
     else {
-        res.status(400).send('The state could not be changed.\n' +
-         'Only "confirmed" and "cancelled" are valid.')
+        res.status(400).json({
+            error: 'The state could not be changed.\n' +
+            'Only "confirmed" and "cancelled" are valid.'
+        })
     }
 }
 
@@ -202,8 +219,10 @@ const tryValidStateAdmin = (req, res, next) => {
         return next()
     }
     else {
-        res.status(400).send('The state could not be changed.\n' +
-        'Only "preparing", "shipping", "cancelled" and "delivered" are valid.')
+        res.status(400).json({
+            error: 'The state could not be changed.\n' + 
+            'Only "preparing", "shipping", "cancelled" and "delivered" are valid.'
+        })
     }
 }
 
@@ -216,7 +235,9 @@ const tryOrderExist = async (req, res, next) => {
         return next()
     }
     else {
-        res.status(404).send('The order you are trying to edit does not exist.')
+        res.status(404).json({
+            error: 'The order you are trying to edit does not exist.'
+        })
     }
 }
 

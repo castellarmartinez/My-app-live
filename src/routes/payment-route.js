@@ -34,10 +34,14 @@ router.post('/', adminAuthentication, tryValidMethod, async (req, res) => {
     const success = await addPaymentMethod(method)
 
     if (success) {
-        res.status(201).send('The payment method has been added.')
+        res.status(201).json({
+            message: 'The payment method has been added.'
+        })
     }
     else {
-        res.status(500).send('Unable to add the payment method.')
+        res.status(500).json({
+            error: 'Unable to add the payment method.'
+        })
     }
 })
 
@@ -65,10 +69,14 @@ router.get('/', userAuthentication, async (req, res) => {
     const methods = await getPaymentMethods()
 
     if (methods) {
-        res.status(200).json(methods)
+        res.status(200).json({
+            payment_methods: methods
+        })
     }
     else {
-        res.status(500).send('Could not access payment methods.')
+        res.status(500).json({
+            error: 'Could not access payment methods.'
+        })
     }
 })
 
@@ -106,10 +114,14 @@ tryValidMethod, async (req, res) => {
     const success = await updatePaymentMethods(option, update)
     
     if (success) {
-        res.status(200).send('The product has been updated.')
+        res.status(200).json({
+            message: 'The payment method has been updated.'
+        })
     }
     else {
-        res.status(500).send('Could not update the product.')
+        res.status(500).json({
+            error: 'Could not update the payment method.'
+        })
     }
 })
 
@@ -140,10 +152,14 @@ async (req, res) => {
     const success = await deletePaymentMethods(payment)
 
     if (success) {
-        res.status(200).send('The payment method has been deleted.')
+        res.status(200).json({
+            message: 'The payment method has been deleted.'
+        })
     }
     else {
-        res.status(500).send('Could not delete the payment method.')
+        res.status(500).json({
+            error: 'Could not delete the payment method.'
+        })
     }
 })
 

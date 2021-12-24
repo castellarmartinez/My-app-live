@@ -35,11 +35,15 @@ const router = express.Router()
     const success = await addUser(newUser)
  
     if (success) {
-        res.status(201).send('Congratulations!\nYour account has been successfully'
-        + ' created.') 
+        res.status(201).json({
+            message: 'Congratulations!\nYour account has been successfully'
+            + ' created.'
+        })
     }  
     else {
-        res.status(500).send('Your account could not be created.')
+        res.status(500).json({
+            error: 'Your account could not be created.'
+        })
     }
 })
  
@@ -67,8 +71,10 @@ router.post('/login', tryLogin, async (req, res) => {
     const user = req.user
     const token = await userLogIn(user)
 
-    res.status(200).send('You are now logged in. Your token for this session:\n' +
-    token) 
+    res.status(200).json({
+        message: 'You are now logged in. Your token for this session:\n',
+        token: token
+    })
 })
 
 /**
@@ -90,10 +96,14 @@ router.post('/logout', tryLogout, async (req, res) => {
     const success = await userLogOut(user)
 
     if (success) {
-        res.status(200).send('Logged out successfully.')
+        res.status(200).json({
+            message: 'Logged out successfully.'
+        })
     }
     else {
-        res.status(500).send('Unable to log out.')
+        res.status(500).json({
+            error: 'Unable to log out.'
+        })
     }
 })
 
@@ -123,10 +133,14 @@ router.post('/address', customerAuthentication, tryValidAddress, async (req, res
     const success = await addAddress(address, user)
 
     if (success) {
-        res.status(201).send('You have added a new address.')
+        res.status(200).json({
+            message: 'You have added a new address.'
+        })
     }
     else {
-        res.status(201).send('Unable to add address.')
+        res.status(500).json({
+            error: 'Unable to add address.'
+        })
     }
 })
 
@@ -154,10 +168,14 @@ router.get('/', adminAuthentication, async (req, res) => {
     const users = await getUsers()
 
     if (users) {
-        res.status(200).json(users)
+        res.status(200).json({
+            users
+        })
     }
     else {
-        res.status(500).send('Could not access registered users.')
+        res.status(500).json({
+            error: 'Could not access registered users.'
+        })
     }
 })
 
@@ -189,7 +207,9 @@ router.get('/addressbook', customerAuthentication, async (req, res) => {
         res.status(200).json(users)
     }
     else {
-        res.status(500).send('Could not access registered users.')
+        res.status(500).json({
+            error: 'Could not access address book.'
+        })
     }
 })
 
@@ -215,13 +235,17 @@ router.get('/addressbook', customerAuthentication, async (req, res) => {
 
 router.put('/suspend', adminAuthentication, trySuspend, async (req, res) => {
     const user = req.user
-    const {success, message} = await suspendUser(user)
+    const {success, state} = await suspendUser(user)
 
     if (success) {
-        res.status(200).send('The user has been ' + message) 
+        res.status(200).json({
+            message: 'The user has been ' + state
+        })
     }  
     else {
-        res.status(500).send('Could not suspend user.')
+        res.status(500).json({
+            error: 'Could not suspend user.'
+        })
     }
 })
 

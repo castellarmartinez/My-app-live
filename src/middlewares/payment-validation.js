@@ -20,11 +20,15 @@ const tryValidMethod = async (req, res, next) => {
     }
     catch (error) {
         if (error.message.includes('"method"')) {
-            res.status(400).send('The method\'s name must have a length between ' 
-            + '3-32 characters and only contain letters, numbers and spaces.')
+            res.status(400).json({
+                error: 'The method\'s name must have a length between ' 
+                + '3-32 characters and only contain letters, numbers and spaces.'
+            })
         }
         else {
-            res.status(400).send('The fields you are trying to add are not allowed.')
+            res.status(400).json({
+                error: 'The fields you are trying to add are not allowed.'
+            })
         }
     }
 }
@@ -36,8 +40,10 @@ const tryMethodUpdate = async (req, res, next) => {
         const exist = await Payment.findOne({option})
 
         if (!exist) {
-            res.status(400).send('The method you are trying to update' + 
-            '/delete does not exist.')
+            res.status(400).json({
+                error: 'The method you are trying to update' + 
+                '/delete does not exist.'
+            })
         }
         else {
             req.payment = exist
@@ -45,7 +51,9 @@ const tryMethodUpdate = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(400).send('Unexpected error in registered method.')
+        res.status(400).json({
+            error: 'Unexpected error in registered method.'
+        })
     }
 }
 

@@ -80,7 +80,9 @@ const tryValidUser = async (req, res, next) => {
     }
     catch (error) {
         const message = invalidUserError(error.message)
-        res.status(400).send(message)
+        res.status(400).json({
+            error: message
+        })
     }
 }
 
@@ -92,10 +94,14 @@ const tryRegisteredUser = async (req, res, next) => {
         const usernameTaken = await User.findOne({username})
 
         if (emailTaken) {
-            res.status(409).send('Email already in use.')
+            res.status(409).json({
+                error: 'Email already in use.'
+            })
         }
         else if (usernameTaken) {
-            res.status(409).send('Username already in use.')
+            res.status(409).json({
+                error: 'Username already in use.'
+            })
         }
         else {
             return next()
@@ -103,7 +109,9 @@ const tryRegisteredUser = async (req, res, next) => {
     }
     catch(error)
     {
-        res.status(400).send('Unexpected error in user registration.')
+        res.status(400).json({
+            error: 'Unexpected error in user registration.'
+        })
     }
 }
 
@@ -136,7 +144,9 @@ const tryLogin = async (req, res, next) => {
         return next()
     }
     catch (error) {
-        res.status(400).send(error.message)
+        res.status(400).json({
+            error: error.message
+        })
     }
 }
 
@@ -152,7 +162,9 @@ const tryLogout = async (req, res, next) => {
         return next()
     }
     catch (error) {
-        res.status(403).send('Please authenticate.')
+        res.status(403).json({
+            error: 'Please authenticate.'
+        })
     }
 }
 
@@ -163,7 +175,9 @@ const tryValidAddress = (req, res, next) => {
         return next()
     }
     else {
-        res.status(400).send('You must provide an address.')
+        res.status(400).json({
+            error: 'You must provide an address.'
+        })
     }
 }
 
@@ -183,7 +197,9 @@ const tryAddressExist = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(400).send(error.message)
+        res.status(400).json({
+            error: error.message
+        })
     }
 }
 
@@ -194,10 +210,14 @@ const trySuspend = async (req, res, next) => {
         const user = await User.findOne({email})
 
         if (!user) {
-            res.status(401).send('An user with that emain is not registered.')
+            res.status(401).json({
+                error: 'An user with that emain is not registered.'
+            })
         }
         else if (user.isAdmin) {
-            res.status(401).send('Admin users cannot be suspended.')
+            res.status(401).json({
+                error: 'Admin users cannot be suspended.'
+            })
         }
         else {
             req.user = user
@@ -205,7 +225,9 @@ const trySuspend = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(400).send(error.message)
+        res.status(400).json({
+            error: error.message
+        })
     }
 }
 

@@ -43,10 +43,14 @@ tryValidProduct, async (req, res) => {
     const success = await addProduct(newProduct, ID)
 
     if (success) {
-        res.status(201).send('The product has been added.')
+        res.status(201).json({
+            message: 'The product has been added.'
+        })
     }
     else {
-        res.status(500).send('Unable to add the product.')
+        res.status(500).json({
+            error: 'Unable to add the product.'
+        })
     }
 })
 
@@ -74,10 +78,14 @@ router.get('/', cacheProducts, async (req, res) => {
     const products = await getProducts()
 
     if (products) {
-        res.status(200).json(products)
+        res.status(200).json({
+            products
+        })
     }
     else {
-        res.status(500).send('Could not access products.')
+        res.status(500).json({
+            error: 'Could not access products.'
+        })
     }
 })
 
@@ -115,10 +123,14 @@ tryProductExist, tryValidProduct, async (req, res) => {
     const success = await updateProduct(ID, update)
 
     if (success) {
-        res.status(200).send('The product has been updated.')
+        res.status(200).json({
+            message: 'The product has been updated.'
+        })
     }
     else {
-        res.status(500).send('Could not update the product.')
+        res.status(500).json({
+            error: 'Could not update the product.'
+        })
     }
 })
 
@@ -149,10 +161,14 @@ async (req, res) => {
     const success = await deleteProduct(ID)
 
     if (success) {
-        res.status(200).send('The product has been deleted.')
+        res.status(200).json({
+            message: 'The product has been deleted.'
+        })
     }
     else {
-        res.status(500).send('Could not delete the product.')
+        res.status(500).json({
+            error: 'Could not delete the product.'
+        })
     }
 })
 

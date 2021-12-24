@@ -55,7 +55,9 @@ const tryValidProduct = async (req, res, next) => {
     }
     catch (error) {
         const message = invalidProductError(error.message)
-        res.status(400).send(message)
+        res.status(400).json({
+            message
+        })
     }
 }
 
@@ -66,14 +68,18 @@ const tryRegisteredProduct = async (req, res, next) => {
         const exist = await Product.findOne({ID})
 
         if (exist) {
-            res.status(400).send('A product with the same ID already exists.')
+            res.status(400).json({
+                error: 'A product with the same ID already exists.'
+            })
         }
         else {
             return next()
         }
     }
     catch (error) {
-        res.status(400).send('Unexpected error in registered product.')
+        res.status(400).json({
+            error: 'Unexpected error in registered product.'
+        })
     }
 }
 
@@ -84,8 +90,10 @@ const tryProductExist = async (req, res, next) => {
         const exist = await Product.findOne({ID})
 
         if (!exist) {
-            res.status(400).send('The product you are trying to access' + 
-            ' does not exist.')
+            res.status(400).json({
+                error: 'The product you are trying to access' + 
+                ' does not exist.'
+            })
         }
         else {
             req.product = exist
@@ -93,7 +101,9 @@ const tryProductExist = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(400).send('Unexpected error in registered product.')
+        res.status(400).json({
+            error: 'Unexpected error in registered product.'
+        })
     }
 }
 
