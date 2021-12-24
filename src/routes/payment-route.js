@@ -47,7 +47,7 @@ router.post('/', adminAuthentication, tryValidMethod, async (req, res) => {
 
 /**
  * @swagger
- * /payment/:
+ * /payment:
  *  get:
  *      tags: [Payment methods]
  *      summary: Obtain all payment methods.

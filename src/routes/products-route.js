@@ -56,7 +56,7 @@ tryValidProduct, async (req, res) => {
 
 /**
  * @swagger
- * /products/:
+ * /products:
  *  get:
  *      tags: [Products]
  *      summary: Obtain all products in the menu.

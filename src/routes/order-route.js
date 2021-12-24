@@ -68,7 +68,7 @@ tryOpenOrder, tryValidOrder, async (req, res) => {
 
 /**
  * @swagger
- * /orders/:
+ * /orders:
  *  get:
  *      tags: [Orders]
  *      summary: Obtain all orders.
