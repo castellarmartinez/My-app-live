@@ -30,7 +30,7 @@ const adminAuthentication = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(403).json({
+        return res.status(403).json({
             error: error.message
         })
     }
@@ -55,7 +55,7 @@ const customerAuthentication = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(403).json({
+        return res.status(403).json({
             error: error.message
         })
     }
@@ -71,11 +71,12 @@ const userAuthentication = async (req, res, next) => {
         else if (!user.isActive) {
             throw new Error('The user is suspended.')
         }
-
-        return next()
+        else {
+            return next()
+        }
     }
     catch (error) {
-        res.status(403).json({
+        return res.status(403).json({
             error: error.message
         })
     }

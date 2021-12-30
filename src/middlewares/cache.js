@@ -8,7 +8,7 @@ const cacheProducts = (req, res, next) => {
 
         if (data) {
             const products = JSON.parse(data)
-            res.json(products)
+            return res.json(products)
         }
         else {
             return next()

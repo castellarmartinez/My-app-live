@@ -38,7 +38,7 @@ const tryMethodUpdate = async (req, res, next) => {
         const exist = await Payment.findOne({option: req.params.id})
 
         if (!exist) {
-            res.status(400).json({
+            return res.status(400).json({
                 error: 'The method you are trying to update' + 
                 '/delete does not exist.'
             })
@@ -48,7 +48,7 @@ const tryMethodUpdate = async (req, res, next) => {
         return next()
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'Unexpected error in registered method.'
         })
     }

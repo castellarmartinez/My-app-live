@@ -72,7 +72,7 @@ const tryOpenOrder = async (req, res, next) => {
     const order = await Order.findOne({owner: req.user._id, state: 'open'})
 
     if (order) {
-        res.status(409).json({
+        return res.status(409).json({
             error: 'You can\'t have more than one open order.\n' +
             'Close or cancel that order to be able to create another order.'
         })
