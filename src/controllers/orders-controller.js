@@ -20,7 +20,7 @@ exports.getOrders = async () => {
         let ordersList = []
 
         for (let i = 0; i < orders.length; i++) {
-            const {orderId, products, total, paymentMethod, address:theAddress,
+            const {orderId, products, total, payment_method, address:theAddress,
                  state, owner} = orders[i]
             let productList = []
 
@@ -30,7 +30,7 @@ exports.getOrders = async () => {
                 productList[j] = {ID, name, price, quantity}
             }
 
-            const { method } = await Payment.findById(paymentMethod)
+            const { method } = await Payment.findById(payment_method)
             const { address } = await Address.findById(theAddress)
             const { name, email } = await User.findById(owner)
 
@@ -50,7 +50,7 @@ exports.getOrdersByUser = async (orders) => {
         let ordersList = []
 
         for (let i = 0; i < orders.length; i++) {
-            const { products, total, paymentMethod, state, address:thisAddress } = orders[i]
+            const { products, total, payment_method, state, address:thisAddress } = orders[i]
             let productList = []
 
             for (let j = 0; j < products.length; j++) {
@@ -59,10 +59,10 @@ exports.getOrdersByUser = async (orders) => {
                 productList[j] = {ID, name, price, quantity}
             }
 
-            const { method } = await Payment.findById(paymentMethod)
+            const { method } = await Payment.findById(payment_method)
             const { address } = await Address.findById(thisAddress)
 
-            ordersList[i] = {products:productList, total, paymentMethod:method,
+            ordersList[i] = {products:productList, total, payment_method:method,
                 address, state}
         }
 
@@ -122,7 +122,7 @@ exports.removeProductFromOrder = async (product, quantityToRemove, order) => {
 
 exports.updatePaymentInOrder = async (payment, order) => {
     try {
-        order.paymentMethod = payment._id
+        order.payment_method = payment._id
         return await order.save()
     }
     catch (error) {

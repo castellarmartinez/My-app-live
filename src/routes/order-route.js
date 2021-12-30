@@ -51,7 +51,7 @@ tryOpenOrder, tryValidOrder, async (req, res) => {
             product: req.product._id,
             quantity: req.body.quantity, 
         }],
-        paymentMethod: req.payment, 
+        payment_method: req.payment, 
         total: req.product.price * req.body.quantity, 
         state: req.body.state, 
         owner: req.user._id
