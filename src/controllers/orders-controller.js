@@ -4,23 +4,10 @@ const Payment = require('../models/payment-method')
 const Product = require('../models/product')
 const User = require('../models/user')
 
-exports.addOrder = async (product, quantity, payment, theAddress, state, user) => {
+exports.addOrder = async (order) => {
     try {
-        const newOrder = {
-            products: [{
-                product: product._id,
-                quantity
-            }],
-
-            paymentMethod: payment._id,
-            total: product.price * quantity,
-            address: theAddress._id,
-            state,
-            owner: user._id
-        }
-
-        const order = new Order(newOrder)
-        return await order.save()
+        const newOrder = new Order(order)
+        return await newOrder.save()
     }
     catch (error) {
         return console.log(error.message)
@@ -29,11 +16,12 @@ exports.addOrder = async (product, quantity, payment, theAddress, state, user) =
 
 exports.getOrders = async () => {
     try {
-        const result = await Order.find({})
-        let orders = []
+        const orders = await Order.find({}).select({_id: 0, __v: 0})
+        let ordersList = []
 
-        for (let i = 0; i < result.length; i++) {
-            const {orderId, products, total, paymentMethod, address:thisAddress, state, owner} = result[i]
+        for (let i = 0; i < orders.length; i++) {
+            const {orderId, products, total, paymentMethod, address:theAddress,
+                 state, owner} = orders[i]
             let productList = []
 
             for (let j = 0; j < products.length; j++) {
@@ -43,13 +31,14 @@ exports.getOrders = async () => {
             }
 
             const { method } = await Payment.findById(paymentMethod)
-            const { address } = await Address.findOne(thisAddress)
+            const { address } = await Address.findById(theAddress)
             const { name, email } = await User.findById(owner)
-            orders[i] = {orderId, products:productList, total, paymentMethod:method, 
+
+            ordersList[i] = {orderId, products:productList, total, payment:method, 
                 address, state, name, email}
         }
 
-        return orders
+        return ordersList
     }
     catch (error) {
         return console.log(error.message)
@@ -175,12 +164,11 @@ function removeAllAmounts(order, quantityToRemove, product) {
 }
 
 function decreaseAmount(order, originalQuantity, quantityToRemove, product) {
-    const newQuantity = originalQuantity - quantityToRemove
     order.total -= quantityToRemove * product.price
     
     for (let i = 0; i < order.products.length; i++) {
         if (JSON.stringify(order.products[i].product) === JSON.stringify(product._id)) {
-            order.products[i].quantity = newQuantity
+            order.products[i].quantity = originalQuantity - quantityToRemove
             break
         }
     }

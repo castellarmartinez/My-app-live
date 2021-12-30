@@ -30,8 +30,7 @@ const router = express.Router();
  */
 
 router.post('/', adminAuthentication, tryValidMethod, async (req, res) => {
-    const {method} = req.body
-    const success = await addPaymentMethod(method)
+    const success = await addPaymentMethod(req.body.method)
 
     if (success) {
         res.status(201).json({
@@ -109,9 +108,7 @@ router.get('/', userAuthentication, async (req, res) => {
 
 router.put('/:id/', adminAuthentication, tryMethodUpdate, 
 tryValidMethod, async (req, res) => {
-    const update = req.body
-    const option = req.params.id
-    const success = await updatePaymentMethods(option, update)
+    const success = await updatePaymentMethods(req.params.id, req.body.update)
     
     if (success) {
         res.status(200).json({
@@ -148,8 +145,7 @@ tryValidMethod, async (req, res) => {
 
 router.delete('/:id/', adminAuthentication, tryMethodUpdate, 
 async (req, res) => {
-    const payment = req.payment
-    const success = await deletePaymentMethods(payment)
+    const success = await deletePaymentMethods(req.payment)
 
     if (success) {
         res.status(200).json({

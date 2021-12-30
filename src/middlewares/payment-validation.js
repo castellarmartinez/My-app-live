@@ -9,35 +9,33 @@ const PaymentSchema = Joi.object({
         .required()
 })
 
+function paymentErrorMessage(message) {
+    if (message.includes('"method"')) {
+        return 'The method\'s name must have a length between ' 
+        + '3-32 characters and only contain letters, numbers and spaces.'
+    }
+    else {
+        return 'The fields you are trying to add are not allowed.'
+    }
+}
+
 // Middlewares
 
 const tryValidMethod = async (req, res, next) => {
-    const newMethod = req.body
-
     try {
-        await PaymentSchema.validateAsync(newMethod)
+        await PaymentSchema.validateAsync(req.body)
         return next()
     }
     catch (error) {
-        if (error.message.includes('"method"')) {
-            res.status(400).json({
-                error: 'The method\'s name must have a length between ' 
-                + '3-32 characters and only contain letters, numbers and spaces.'
-            })
-        }
-        else {
-            res.status(400).json({
-                error: 'The fields you are trying to add are not allowed.'
-            })
-        }
+        return res.status(400).json({
+            error: paymentErrorMessage(error.message)
+        })
     }
 }
 
 const tryMethodUpdate = async (req, res, next) => {
-    const option = req.params.id
-
     try {
-        const exist = await Payment.findOne({option})
+        const exist = await Payment.findOne({option: req.params.id})
 
         if (!exist) {
             res.status(400).json({
@@ -45,10 +43,9 @@ const tryMethodUpdate = async (req, res, next) => {
                 '/delete does not exist.'
             })
         }
-        else {
-            req.payment = exist
-            return next()
-        }
+
+        req.payment = exist
+        return next()
     }
     catch (error) {
         res.status(400).json({

@@ -40,13 +40,10 @@ function invalidProductError(message) {
 // Middlewares
 
 const tryValidProduct = async (req, res, next) => {
-    const newProduct = req.body
-    const ID = req.params.id
-
     const product = {
-        ID,
-        name: newProduct.name,
-        price: newProduct.price
+        ID: req.params.id,
+        name: req.body.name,
+        price: req.body.price
     }
     
     try {
@@ -54,54 +51,47 @@ const tryValidProduct = async (req, res, next) => {
         return next()
     }
     catch (error) {
-        const message = invalidProductError(error.message)
-        res.status(400).json({
-            message
+        return res.status(400).json({
+            message: invalidProductError(error.message)
         })
     }
 }
 
 const tryRegisteredProduct = async (req, res, next) => {
-    const ID =  req.params.id
-
     try {
-        const exist = await Product.findOne({ID})
+        const exist = await Product.findOne({ID: req.params.id})
 
         if (exist) {
-            res.status(400).json({
+            return res.status(400).json({
                 error: 'A product with the same ID already exists.'
             })
         }
-        else {
-            return next()
-        }
+
+        return next()
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'Unexpected error in registered product.'
         })
     }
 }
 
 const tryProductExist = async (req, res, next) => {
-    const ID =  req.params.id
-
     try {
-        const exist = await Product.findOne({ID})
+        const exist = await Product.findOne({ID: req.params.id})
 
         if (!exist) {
-            res.status(400).json({
+            return res.status(400).json({
                 error: 'The product you are trying to access' + 
                 ' does not exist.'
             })
         }
-        else {
-            req.product = exist
-            return next()
-        }
+
+        req.product = exist
+        return next()
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'Unexpected error in registered product.'
         })
     }

@@ -46,13 +46,18 @@ const router = express.Router()
 
 router.post('/:id/', customerAuthentication, tryProductExist, 
 tryOpenOrder, tryValidOrder, async (req, res) => {
-    const product = req.product
-    const payment = req.payment
-    const address = req.address
-    const {quantity, state} = req.body
-    const user = req.user
+    const order = {
+        products: [{
+            product: req.product._id,
+            quantity: req.body.quantity, 
+        }],
+        paymentMethod: req.payment, 
+        total: req.product.price * req.body.quantity, 
+        state: req.body.state, 
+        owner: req.user._id
+    }
 
-    const success = await addOrder(product, quantity, payment, address, state, user)
+    const success = await addOrder(order)
 
     if (success) {
         res.status(201).json({
@@ -130,8 +135,7 @@ router.get('/', adminAuthentication, async (req, res) => {
  */
 
 router.get('/history', customerAuthentication, tryHaveOrders, async (req, res) => {
-    const orders = req.orders
-    const ordersDetails = await getOrdersByUser(orders)
+    const ordersDetails = await getOrdersByUser(req.orders)
 
     if (ordersDetails) {
         res.status(200).json({
@@ -174,11 +178,8 @@ router.get('/history', customerAuthentication, tryHaveOrders, async (req, res) =
 
 router.put('/addProduct/:id/', customerAuthentication, tryCanEditOrder, 
 tryProductExist, tryValidAddition, async (req, res) => {
-    const order = req.order
-    const {quantity} = req.query
-    const quantityToAdd = parseInt(quantity, 10)
-    const product = req.product
-    const success = await addProductToOrder(product, quantityToAdd, order)
+    const qtyToAdd = parseInt(req.query.quantity, 10)
+    const success = await addProductToOrder(req.product, qtyToAdd, req.order)
     
     if (success) {
         res.status(200).json({
@@ -221,11 +222,8 @@ tryProductExist, tryValidAddition, async (req, res) => {
 
 router.put('/removeProduct/:id/', customerAuthentication, tryCanEditOrder,
 tryProductExist, tryValidElimination, async (req, res) => {
-    const {quantity} = req.query
-    const quantityToRemove = parseInt(quantity, 10)
-    const product = req.product
-    const order = req.order
-    const success = await removeProductFromOrder(product, quantityToRemove, order)
+    const qtyToRemove = parseInt(req.query.quantity, 10)
+    const success = await removeProductFromOrder(req.product, qtyToRemove, req.order)
     
     if (success) {
         res.status(200).json({
@@ -265,9 +263,7 @@ tryProductExist, tryValidElimination, async (req, res) => {
 
 router.put('/payment/:id', customerAuthentication, tryCanEditOrder, 
 tryMethodUpdate, async (req, res) => {
-    const payment = req.payment
-    const order = req.order
-    const success = await updatePaymentInOrder(payment, order)
+    const success = await updatePaymentInOrder(req.payment, req.order)
     
     if (success) {
         res.status(200).json({
@@ -307,9 +303,7 @@ tryMethodUpdate, async (req, res) => {
 
 router.put('/address', customerAuthentication, tryCanEditOrder, 
 tryAddressExist, async (req, res) => {
-    const address = req.address
-    const order = req.order
-    const success = await updateAddress(address, order)
+    const success = await updateAddress(req.address, req.order)
     
     if (success) {
         res.status(200).json({
@@ -354,9 +348,7 @@ tryAddressExist, async (req, res) => {
 
 router.put('/state/customer', customerAuthentication, tryCanEditOrder, 
 tryValidStateCustomer, async (req, res) => {
-    const {state} = req.query
-    const order = req.order
-    const success = await updateOrderState(state, order)
+    const success = await updateOrderState(req.query.state, req.order)
     
     if (success) {
         res.status(200).json({
@@ -405,9 +397,7 @@ tryValidStateCustomer, async (req, res) => {
 
 router.put('/state/admin', adminAuthentication, tryOrderExist, 
 tryValidStateAdmin, async (req, res) => {
-    const {state} = req.query
-    const order = req.order
-    const success = await updateOrderState(state, order)
+    const success = await updateOrderState(req.query.state, req.order)
     
     if (success) {
         res.status(200).json({

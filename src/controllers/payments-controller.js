@@ -12,14 +12,7 @@ const addPaymentMethod = async (method) => {
 
 const getPaymentMethods = async () => {
     try {
-        const payments = await Payment.find({})
-        
-        const methods = payments.map((payment) => {
-            const {method, option} = payment
-            return {method, option}
-        })
-
-        return methods
+        return await Payment.find({}).select({_id: 0, __v: 0})
     }
     catch (error) {
         return console.log(error.message)
@@ -28,8 +21,7 @@ const getPaymentMethods = async () => {
 
 const updatePaymentMethods = async (option, method) => {    
     try {
-        const methodModified = await Payment.findOneAndUpdate({option}, method)
-        return methodModified
+        return await Payment.findOneAndUpdate({option}, method)
     }
     catch (error) {
         return console.log(error.message)

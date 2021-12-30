@@ -31,8 +31,7 @@ const router = express.Router()
  */
 
  router.post('/register', tryValidUser, tryRegisteredUser, async (req, res) => {
-    const newUser = req.body
-    const success = await addUser(newUser)
+    const success = await addUser(req.body)
  
     if (success) {
         res.status(201).json({
@@ -68,8 +67,7 @@ const router = express.Router()
  */
 
 router.post('/login', tryLogin, async (req, res) => {
-    const user = req.user
-    const token = await userLogIn(user)
+    const token = await userLogIn(req.user)
 
     res.status(200).json({
         message: 'You are now logged in. Your token for this session:',
@@ -92,8 +90,7 @@ router.post('/login', tryLogin, async (req, res) => {
  */
 
 router.post('/logout', tryLogout, async (req, res) => {
-    const user = req.user
-    const success = await userLogOut(user)
+    const success = await userLogOut(req.user)
 
     if (success) {
         res.status(200).json({
@@ -128,9 +125,7 @@ router.post('/logout', tryLogout, async (req, res) => {
  */
 
 router.post('/address', customerAuthentication, tryValidAddress, async (req, res) => {
-    const {address} = req.body
-    const user = req.user
-    const success = await addAddress(address, user)
+    const success = await addAddress(req.body.address, req.user)
 
     if (success) {
         res.status(200).json({
@@ -200,8 +195,7 @@ router.get('/', adminAuthentication, async (req, res) => {
  */
 
 router.get('/addressbook', customerAuthentication, async (req, res) => {
-    const user = req.user
-    const addresses = await getAddressList(user)
+    const addresses = await getAddressList(req.user)
 
     if (addresses) {
         res.status(200).json({
@@ -236,8 +230,7 @@ router.get('/addressbook', customerAuthentication, async (req, res) => {
  */
 
 router.put('/suspend', adminAuthentication, trySuspend, async (req, res) => {
-    const user = req.user
-    const {success, state} = await suspendUser(user)
+    const {success, state} = await suspendUser(req.user)
 
     if (success) {
         res.status(200).json({

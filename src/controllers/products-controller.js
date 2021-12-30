@@ -16,13 +16,7 @@ exports.addProduct = async ({name, price}, ID) => {
 
 exports.getProducts = async () => {
     try {
-        const result = await Product.find({})
-
-        const products = result.map((element) => {
-            const {ID, name, price} = element
-            return {ID, name, price}
-        })
-
+        const products = await Product.find({}).select({_id: 0, __v: 0})
         redisClient.setex('Products', 60*60, JSON.stringify(products))
         return products
     }

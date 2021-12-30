@@ -33,14 +33,7 @@ exports.addAddress = async (address, user) => {
 
 exports.getUsers = async () => {
     try {
-        const users = await User.find({})
-        
-        const userList = users.map((user) => {
-            const {name, usermane, email, phone, isAdmin, isActive} = user
-            return {name, usermane, email, phone, isAdmin, isActive}
-        })
-
-        return userList
+        return await User.find({}).select({_id: 0, __v: 0, password: 0, token: 0})
     }
     catch (error) {
         return console.log(error.message)
@@ -49,16 +42,11 @@ exports.getUsers = async () => {
 
 exports.getAddressList = async (user) => {
     try {
-       const addresses = await Address.find({owner: user._id})
+       const addresses = await Address.find({owner: user._id}).select({_id: 0, __v: 0})
 
        if (addresses.length > 0) {
-           const userAddresses = addresses.map((element) => {
-                return {address: element.address, option: element.option}
-           })
-
-           return userAddresses
+           return addresses
        }
-
        else {
             return 'You do not have addresses saved.'
        }

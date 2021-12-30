@@ -71,35 +71,29 @@ function invalidUserError(message) {
 // Middlewares
 
 const tryValidUser = async (req, res, next) => {
-    const newUser = req.body
-
     try {
-        await UsuarioSchema.validateAsync(newUser)
-
+        await UsuarioSchema.validateAsync(req.body)
         return next()
     }
     catch (error) {
-        const message = invalidUserError(error.message)
-        res.status(400).json({
-            error: message
+        return res.status(400).json({
+            error: invalidUserError(error.message)
         })
     }
 }
 
 const tryRegisteredUser = async (req, res, next) => {
-    const { username, email } = req.body
-
     try {
-        const emailTaken = await User.findOne({email})
-        const usernameTaken = await User.findOne({username})
+        const emailTaken = await User.findOne({email: req.body.email})
+        const usernameTaken = await User.findOne({username: req.body.username})
 
         if (emailTaken) {
-            res.status(409).json({
+            return res.status(409).json({
                 error: 'Email already in use.'
             })
         }
         else if (usernameTaken) {
-            res.status(409).json({
+            return res.status(409).json({
                 error: 'Username already in use.'
             })
         }
@@ -109,7 +103,7 @@ const tryRegisteredUser = async (req, res, next) => {
     }
     catch(error)
     {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'Unexpected error in user registration.'
         })
     }
@@ -145,7 +139,7 @@ const tryLogin = async (req, res, next) => {
         return next()
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: error.message
         })
     }
@@ -163,60 +157,52 @@ const tryLogout = async (req, res, next) => {
         return next()
     }
     catch (error) {
-        res.status(403).json({
+        return res.status(403).json({
             error: 'Please authenticate.'
         })
     }
 }
 
 const tryValidAddress = (req, res, next) => {
-    const { address } = req.body
-
-    if (address) {
+    if (req.body.address) {
         return next()
     }
     else {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'You must provide an address.'
         })
     }
 }
 
 const tryAddressExist = async (req, res, next) => {
-    const { option } = req.query
-    const user = req.user
-
     try {
-        const exist = await Address.findOne({owner: user._id, option})
+        const exist = await Address.findOne({owner: req.user._id, option: req.query.option})
 
-        if (exist) {
-            req.address = exist
-            return next()
-        }
-        else {
+        if (!exist) {
             throw new Error('The address you are trying to access does not exist.')
         }
+
+        req.address = exist
+        return next()
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: error.message
         })
     }
 }
 
 const trySuspend = async (req, res, next) => {
-    const { email } = req.body
-
     try {
-        const user = await User.findOne({email})
+        const user = await User.findOne({email: req.body.email})
 
         if (!user) {
-            res.status(401).json({
+            return res.status(401).json({
                 error: 'An user with that emain is not registered.'
             })
         }
         else if (user.isAdmin) {
-            res.status(401).json({
+            return res.status(401).json({
                 error: 'Admin users cannot be suspended.'
             })
         }
@@ -226,7 +212,7 @@ const trySuspend = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: error.message
         })
     }

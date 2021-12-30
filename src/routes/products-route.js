@@ -38,9 +38,7 @@ const router = express.Router()
 
 router.post('/:id/', adminAuthentication, tryRegisteredProduct, 
 tryValidProduct, async (req, res) => {
-    const newProduct = req.body
-    const ID = req.params.id
-    const success = await addProduct(newProduct, ID)
+    const success = await addProduct(req.body, req.params.id)
 
     if (success) {
         res.status(201).json({
@@ -118,9 +116,7 @@ router.get('/', cacheProducts, async (req, res) => {
 
 router.put('/:id/', adminAuthentication, 
 tryProductExist, tryValidProduct, async (req, res) => {
-    const update = req.body
-    const ID = req.params.id
-    const success = await updateProduct(ID, update)
+    const success = await updateProduct(req.params.id, req.body)
 
     if (success) {
         res.status(200).json({
@@ -157,8 +153,7 @@ tryProductExist, tryValidProduct, async (req, res) => {
 
 router.delete('/:id/',  adminAuthentication, tryProductExist, 
 async (req, res) => {
-    const ID = req.params.id
-    const success = await deleteProduct(ID)
+    const success = await deleteProduct(req.params.id)
 
     if (success) {
         res.status(200).json({
