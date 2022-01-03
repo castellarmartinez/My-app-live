@@ -16,29 +16,9 @@ exports.addOrder = async (order) => {
 
 exports.getOrders = async () => {
     try {
+        const admin = true
         const orders = await Order.find({}).select({_id: 0, __v: 0})
-        let ordersList = []
-
-        for (let i = 0; i < orders.length; i++) {
-            const {orderId, products, total, payment_method, address:theAddress,
-                 state, owner} = orders[i]
-            let productList = []
-
-            for (let j = 0; j < products.length; j++) {
-                const {ID, name, price} = await Product.findById(products[j].product)
-                const quantity = products[j].quantity
-                productList[j] = {ID, name, price, quantity}
-            }
-
-            const { method } = await Payment.findById(payment_method)
-            const { address } = await Address.findById(theAddress)
-            const { name, email } = await User.findById(owner)
-
-            ordersList[i] = {orderId, products:productList, total, payment:method, 
-                address, state, name, email}
-        }
-
-        return ordersList
+        return getOrderDitails(orders, admin)
     }
     catch (error) {
         return console.log(error.message)
@@ -46,27 +26,9 @@ exports.getOrders = async () => {
 }
 
 exports.getOrdersByUser = async (orders) => {
-    try {
-        let ordersList = []
-
-        for (let i = 0; i < orders.length; i++) {
-            const { products, total, payment_method, state, address:thisAddress } = orders[i]
-            let productList = []
-
-            for (let j = 0; j < products.length; j++) {
-                const {ID, name, price} = await Product.findById(products[j].product)
-                const quantity = products[j].quantity
-                productList[j] = {ID, name, price, quantity}
-            }
-
-            const { method } = await Payment.findById(payment_method)
-            const { address } = await Address.findById(thisAddress)
-
-            ordersList[i] = {products:productList, total, payment_method:method,
-                address, state}
-        }
-
-        return ordersList
+    try {        
+        const admin = false
+        return getOrderDitails(orders, admin)
     }
     catch (error) {
         return console.log(error.message)
@@ -174,4 +136,57 @@ function decreaseAmount(order, originalQuantity, quantityToRemove, product) {
     }
 
     return order
+}
+
+async function getOrderDitails(orders, admin) {
+    let orderDitails = await getCommonDitails(orders)
+    
+    if (admin) {
+        orderDitails = addAdminDitails(orders, orderDitails)
+    }
+
+    return orderDitails
+}
+
+async function getCommonDitails(orders) {
+    let ordersList = []
+
+    for (let i = 0; i < orders.length; i++) {
+        const {products, total, payment_method, state, address:theAddress} = orders[i]
+        
+        const productList = await getProductsDitails(products)
+        const { method } = await Payment.findById(payment_method)
+        const { address } = await Address.findById(theAddress)
+
+        ordersList[i] = {products:productList, total, payment_method:method, 
+            address, state}
+    }
+
+    return ordersList
+}
+
+async function getProductsDitails(products) {
+    let productList = []
+
+    for (let j = 0; j < products.length; j++) {
+        const { ID, name, price } = await Product.findById(products[j].product)
+        const quantity = products[j].quantity
+        productList[j] = { ID, name, price, quantity }
+    }
+    
+    return productList
+}
+
+async function addAdminDitails(orders, orderDitails) {
+
+    for (let i = 0; i < orders.length; i++) {
+        const {orderId, owner} = orders[i]
+        const { name, email } = await User.findById(owner)
+
+        orderDitails[i].name = name
+        orderDitails[i].email = email
+        orderDitails[i].orderId = orderId
+    }
+
+    return orderDitails
 }

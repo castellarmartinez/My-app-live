@@ -113,7 +113,7 @@ const tryValidOrder = async (req, res, next) => {
         }
     }
     catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: orderErrorMessage(error.message)
         })
     }
