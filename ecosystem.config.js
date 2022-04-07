@@ -6,12 +6,12 @@ module.exports = {
         
         env_local: {
             'NODE_ENV': 'local',
-            'API_DESCRIPTION': 'Estás ejecutando tu API en modo desarrollador.' 
+            'API_DESCRIPTION': 'API is running on development.' 
         },
 
         env_production: {
             'NODE_ENV': 'production',
-            'API_DESCRIPTION': 'Estás ejecutando tu API en producción. ¡¡Ten cuidado!!'
+            'API_DESCRIPTION': 'API is running on production. Be careful!'
         }
     }]
 }
