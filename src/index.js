@@ -31,3 +31,5 @@ app.listen(port, () => {
     console.log(`La aplicación se está ejecutando en el ambiente: '${environment}'`)
     console.log(`Description: '${apiDescription}'`)
 })
+
+module.exports = app;
