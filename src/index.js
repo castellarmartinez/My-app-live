@@ -1,6 +1,7 @@
 require('./redis/redis-server')
 require('./db/mongoose')
 const express = require('express')
+const path = require('path')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
 const swaggerOptions = require('./utils/swaggerOptions')
@@ -19,6 +20,7 @@ const app = express()
 
 app.use(express.json())
 app.use(helmet({ contentSecurityPolicy: { directives: cspDefaults }}))
+app.use(express.static(path.join(__dirname, './public')));
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs))
 app.use('/users', require('./routes/users-route'))
