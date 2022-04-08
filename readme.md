@@ -2,7 +2,7 @@
 
 ## ¿What is **_My Persistent APP_**?
 
-It is an API that simulates the backend for Delilah Restaurant. On it users can sign up and make orders of the products offered by the restaurant. The API is running on Amazon Linux 2 instances, and is accessible publicly on [www.thedelilahresto.tk](www.thedelilahresto.tk).
+It is an API that simulates the backend for Delilah Restaurant. On it users can sign up and make orders of the products offered by the restaurant. The API is running on Amazon Linux 2 instances, and is accessible publicly on [www.thedelilahresto.tk](http://www.thedelilahresto.tk).
 
 ## AWS Architecture
 
